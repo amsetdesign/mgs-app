@@ -4,10 +4,11 @@ import PromoStrip from "@/components/PromoStrip";
 import { ArticleCard, ArtistCard, EmptyState, EventCard, SectionHead, toSongRow } from "@/components/Cards";
 import SongList from "@/components/SongList";
 import { IconCheck } from "@/components/icons";
-import { PACKS, SITE } from "@/lib/site";
+import { PACKS } from "@/lib/site";
 import { formatPrice, todayLong } from "@/lib/format";
 import HomeHero from "@/components/HomeHero";
 import Carousel from "@/components/Carousel";
+import AppPromo from "@/components/AppPromo";
 import Image from "next/image";
 import { GGU, GGU3 } from "@/lib/photos";
 
@@ -169,27 +170,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Application ===== */}
-      <section className="container-x py-20">
-        <div className="grid gap-8 rounded-[28px] bg-plum p-8 text-white sm:p-12 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-          <div>
-            <p className="eyebrow text-white/75">Application mobile</p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">Tout le gospel dans votre poche</h2>
-            <p className="mt-4 max-w-xl text-white/85">
-              Écoutez gratuitement, suivez vos artistes, créez vos playlists. Les artistes publient leurs titres et suivent leurs écoutes.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3 lg:justify-end">
-            {SITE.playStore || SITE.appStore ? (
-              <>
-                {SITE.playStore && <a href={SITE.playStore} className="btn-light">Google Play</a>}
-                {SITE.appStore && <a href={SITE.appStore} className="btn-light">App Store</a>}
-              </>
-            ) : (
-              <p className="rounded-full border border-white/30 px-5 py-3 text-sm">Bientôt sur Android et iPhone</p>
-            )}
-          </div>
-        </div>
-      </section>
+      <AppPromo />
     </>
   );
 }
