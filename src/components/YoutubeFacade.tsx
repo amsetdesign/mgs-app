@@ -4,7 +4,7 @@ import { useState } from "react";
 import { IconPlay } from "./icons";
 
 /** Vignette YouTube cliquable : la vidéo (et ses scripts) ne se charge qu'au clic. */
-export default function YoutubeFacade({ id, title, className = "" }: { id: string; title: string; className?: string }) {
+export default function YoutubeFacade({ id, title, className = "", caption = true }: { id: string; title: string; className?: string; caption?: boolean }) {
   const [playing, setPlaying] = useState(false);
   return (
     <div className={`relative aspect-video overflow-hidden rounded-[var(--radius-card)] bg-ink ${className}`}>
@@ -24,7 +24,7 @@ export default function YoutubeFacade({ id, title, className = "" }: { id: strin
           <span className="absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-plum text-white shadow-lg transition-transform group-hover:scale-110 sm:size-20">
             <IconPlay className="ml-1 size-7 sm:size-8" />
           </span>
-          <span className="absolute bottom-3 left-4 text-left text-sm font-semibold text-white">{title}</span>
+          {caption && <span className="absolute bottom-3 left-4 text-left text-sm font-semibold text-white">{title}</span>}
         </button>
       )}
     </div>

@@ -30,7 +30,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ===== Ouverture : une de média ===== */}
-      <HomeHero article={articles[0] ?? null} latestSong={latest[0] ?? null} today={todayLong()} />
+      <HomeHero article={articles[0] ?? null} today={todayLong()} />
 
       {/* ===== À écouter ===== */}
       <section id="ecouter" className="container-x pt-20">

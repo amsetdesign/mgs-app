@@ -1,30 +1,44 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Article, Song } from "@/lib/data";
+import type { Article } from "@/lib/data";
 import { ARTICLE_CATEGORIES } from "@/lib/labels";
 import { formatDate } from "@/lib/format";
-import { GGU3, type Photo } from "@/lib/photos";
-import { toSongRow } from "./Cards";
-import SongList from "./SongList";
+import { GGU, GGU3, type Photo } from "@/lib/photos";
+import YoutubeFacade from "./YoutubeFacade";
 import { IconArrow, IconCalendar } from "./icons";
 
-// Mur de photos : les artistes au micro sur la scène du GGU 3 (ce sont eux qu'on met en avant)
-const WALL: Photo[] = [GGU3.casquette, GGU3.denim, GGU3.rappeur, GGU3.vesteRouge, GGU3.costume, GGU3.guitare, GGU3.laPlume, GGU3.artiste1];
+// Artistes au micro sur la scène du GGU 3, fondus les uns dans les autres (position, taille, opacité)
+const WALL: { photo: Photo; cls: string }[] = [
+  { photo: GGU3.casquette, cls: "right-[-6%] top-[-8%] h-[115%] w-[42%] opacity-90" },
+  { photo: GGU3.vesteRouge, cls: "right-[24%] top-[-12%] h-[95%] w-[30%] opacity-75" },
+  { photo: GGU3.rappeur, cls: "right-[8%] bottom-[-18%] h-[70%] w-[40%] opacity-70" },
+  { photo: GGU3.denim, cls: "left-[34%] top-[-10%] h-[85%] w-[28%] opacity-60 hidden sm:block" },
+  { photo: GGU3.costume, cls: "left-[-8%] top-[-14%] h-[90%] w-[34%] opacity-45 hidden sm:block" },
+  { photo: GGU3.guitare, cls: "left-[18%] bottom-[-22%] h-[75%] w-[30%] opacity-30 hidden lg:block" },
+];
 
-type Props = { article: Article | null; latestSong: Song | null; today: string };
+// fondu sur tous les bords : les photos se mêlent au fond sans cadre visible
+const FADE = {
+  WebkitMaskImage: "radial-gradient(ellipse 50% 50% at 50% 45%, #000 30%, transparent 98%)",
+  maskImage: "radial-gradient(ellipse 50% 50% at 50% 45%, #000 30%, transparent 98%)",
+  mixBlendMode: "lighten",
+} as const;
 
-/** Ouverture de l'accueil, façon une de média : date du jour, rubriques, son du moment. */
-export default function HomeHero({ article, latestSong, today }: Props) {
+type Props = { article: Article | null; today: string };
+
+/** Ouverture de l'accueil, façon une de média : date du jour, rubriques, clip du moment. */
+export default function HomeHero({ article, today }: Props) {
   return (
     <section className="relative isolate overflow-hidden bg-ink text-white">
-      <div aria-hidden className="absolute inset-0 -z-10 grid grid-cols-2 grid-rows-4 gap-1 opacity-80 sm:grid-cols-4 sm:grid-rows-2">
-        {WALL.map((p, i) => (
-          <div key={p.src} className={`relative overflow-hidden ${i > 3 ? "hidden sm:block" : ""}`}>
-            <Image src={p.src} alt="" fill sizes="25vw" priority={i < 4} className="object-cover object-top" />
+      <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
+        {WALL.map(({ photo, cls }, i) => (
+          <div key={photo.src} className={`absolute ${cls}`} style={FADE}>
+            <Image src={photo.src} alt="" fill sizes="45vw" priority={i < 3} className="object-cover object-top" />
           </div>
         ))}
+        <div className="absolute top-1/3 right-1/4 size-[520px] rounded-full bg-plum/30 blur-[120px]" />
       </div>
-      <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/80 via-ink/75 to-ink/95 lg:bg-gradient-to-r lg:from-ink/95 lg:via-ink/70 lg:to-[#2a0b31]/40" />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/70 via-ink/60 to-ink/95 lg:bg-gradient-to-r lg:from-ink lg:via-ink/55 lg:to-transparent" />
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-ink to-transparent" />
 
       {/* bandeau de la une : date et rubriques, comme un journal */}
@@ -56,12 +70,17 @@ export default function HomeHero({ article, latestSong, today }: Props) {
         </div>
 
         <div className="space-y-3">
-          {latestSong && (
-            <div className="rounded-[24px] bg-night/85 p-3 ring-1 ring-white/10 backdrop-blur sm:p-4">
-              <p className="eyebrow px-2 pb-1 text-orchid">Son du moment</p>
-              <SongList songs={[toSongRow(latestSong)]} dark />
+          <div className="rounded-[24px] bg-night/85 p-3 ring-1 ring-white/10 backdrop-blur sm:p-4">
+            <p className="eyebrow px-1 pb-3 text-orchid">Son du moment</p>
+            <YoutubeFacade id={GGU.clip} title="Différents mais tous utiles · clip officiel du GGU 3" caption={false} />
+            <div className="flex items-center justify-between gap-3 px-1 pt-3">
+              <span className="min-w-0">
+                <span className="block truncate font-medium">Différents mais tous utiles</span>
+                <span className="block truncate text-xs text-haze">Les artistes du Galsen Gospel Urbain 3</span>
+              </span>
+              <Link href="/galsen-gospel-urbain" className="shrink-0 text-xs font-semibold text-orchid hover:underline">Le festival</Link>
             </div>
-          )}
+          </div>
           {article && (
             <Link href={`/actualites/${article.slug}`} className="group block rounded-[24px] bg-night/85 p-5 ring-1 ring-white/10 backdrop-blur hover:bg-night-2">
               <p className="eyebrow text-orchid">À la une · {ARTICLE_CATEGORIES[article.category]}</p>
