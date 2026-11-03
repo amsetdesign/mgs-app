@@ -246,3 +246,20 @@ export function promotionTarget(p: Promotion) {
   if (p.kind === "event" && p.events) return { image: p.image_url || p.events.poster_url, href: `/evenements/${p.events.slug}` };
   return { image: p.image_url, href: p.link_url || "/" };
 }
+
+// ===== Page d'un titre (liens de partage) =====
+export type SongDetail = Song & { lyrics: string; album_id: string | null; artists: { slug: string; profiles: { full_name: string; avatar_url: string } | null } | null };
+
+export function getSong(id: string) {
+  return safe(null, async () => {
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+    const { data } = await publicClient()
+      .from("songs")
+      .select("id, title, audio_url, cover_url, genre, duration, streams_count, created_at, artist_id, lyrics, album_id, artists(slug, profiles(full_name, avatar_url))")
+      .eq("id", id)
+      .eq("is_published", true)
+      .maybeSingle();
+    const song = data as unknown as SongDetail | null;
+    return song && isPlayable(song) ? song : null;
+  });
+}

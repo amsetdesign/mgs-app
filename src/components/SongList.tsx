@@ -84,7 +84,7 @@ export default function SongList({ songs, ranked = false, dark = false }: { song
               </span>
             </button>
             <div className="min-w-0 flex-1">
-              <p className={`truncate font-medium ${active ? (dark ? "text-orchid" : "text-plum") : text}`}>{song.title}</p>
+              <Link href={`/titres/${song.id}`} className={`block truncate font-medium hover:underline ${active ? (dark ? "text-orchid" : "text-plum") : text}`}>{song.title}</Link>
               {song.artistSlug ? (
                 <Link href={`/artistes/${song.artistSlug}`} className={`block truncate text-sm ${sub} hover:underline`}>{song.artistName}</Link>
               ) : (
