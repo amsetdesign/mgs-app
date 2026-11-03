@@ -103,8 +103,8 @@ export default async function HomePage() {
       {/* ===== Festival GGU ===== */}
       <section className="relative isolate overflow-hidden bg-ink py-16 text-white">
         <div aria-hidden className="absolute -top-32 -left-24 -z-10 size-[460px] rounded-full bg-plum/45 blur-[120px]" />
-        <div aria-hidden className="absolute -right-24 -bottom-40 -z-10 size-[440px] rounded-full bg-[#1f9d55]/25 blur-[120px]" />
-        <div aria-hidden className="absolute top-1/3 right-1/3 -z-10 size-[300px] rounded-full bg-[#f2b705]/10 blur-[110px]" />
+        <div aria-hidden className="absolute -right-24 -bottom-40 -z-10 size-[440px] rounded-full bg-orchid/20 blur-[120px]" />
+        <div aria-hidden className="absolute top-1/3 right-1/3 -z-10 size-[300px] rounded-full bg-plum/25 blur-[110px]" />
         <div className="container-x">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
@@ -112,8 +112,8 @@ export default async function HomePage() {
               <h2 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">Galsen Gospel Urbain</h2>
               <ul className="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
                 <li className="rounded-full bg-plum px-3 py-1.5">3e édition</li>
-                <li className="rounded-full bg-[#1f9d55] px-3 py-1.5">26 – 28 décembre 2025</li>
-                <li className="rounded-full bg-[#f2b705] px-3 py-1.5 text-ink">Entrée gratuite</li>
+                <li className="rounded-full bg-orchid px-3 py-1.5 text-ink">26 – 28 décembre 2025</li>
+                <li className="rounded-full bg-white px-3 py-1.5 text-plum">Entrée gratuite</li>
                 <li className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/15">Centre culturel Blaise Senghor</li>
               </ul>
               <p className="mt-5 max-w-xl text-lg text-haze">
@@ -132,7 +132,7 @@ export default async function HomePage() {
                 <span className="absolute top-3 left-3 rounded-full bg-plum px-3 py-1 text-xs font-semibold shadow">Grand concert</span>
               </Link>
               {[GGU3.bellusAnneaux, GGU3.vesteRouge, GGU3.costume, GGU3.sweatBordeaux].map((ph, i) => (
-                <div key={ph.src} className={`relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] ring-2 ${["ring-plum", "ring-[#1f9d55]", "ring-[#f2b705]", "ring-orchid"][i]}`}>
+                <div key={ph.src} className={`relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] ring-2 ${["ring-plum", "ring-orchid", "ring-white/70", "ring-orchid"][i]}`}>
                   <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 12vw, 22vw" className={`object-cover ${ph.h > ph.w ? "origin-[50%_30%] scale-[1.45] object-[50%_30%]" : "object-[50%_25%]"}`} />
                 </div>
               ))}
@@ -159,7 +159,7 @@ export default async function HomePage() {
       {/* ===== Actualités ===== */}
       <div className="relative isolate overflow-hidden">
         <div aria-hidden className="absolute -top-20 -right-24 -z-10 size-[420px] rounded-full bg-orchid/40 blur-[110px]" />
-        <div aria-hidden className="absolute bottom-0 -left-32 -z-10 size-[380px] rounded-full bg-[#f2b705]/15 blur-[110px]" />
+        <div aria-hidden className="absolute bottom-0 -left-32 -z-10 size-[380px] rounded-full bg-plum/15 blur-[110px]" />
       <section className="container-x py-16">
         <SectionHead eyebrow="Actualités" title="Le gospel, ici et maintenant" link={{ href: "/actualites", label: "Toutes les actualités" }} />
         {articles.length > 0 ? (
@@ -179,7 +179,7 @@ export default async function HomePage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {PACKS.map((p) => (
               <div key={p.id} className={`relative flex flex-col overflow-hidden rounded-[var(--radius-card)] p-6 shadow-[0_14px_30px_-20px_rgb(128_0_128/0.5)] ${p.id === "premium" ? "bg-gradient-to-br from-plum to-[#3c096c] text-white" : "bg-white"}`}>
-                <span aria-hidden className={`absolute inset-x-0 top-0 h-1.5 ${{ gratuit: "bg-[#1f9d55]", boost: "bg-[#f2b705]", premium: "bg-orchid", accompagnement: "bg-plum" }[p.id]}`} />
+                <span aria-hidden className={`absolute inset-x-0 top-0 h-1.5 ${{ gratuit: "bg-orchid", boost: "bg-plum", premium: "bg-orchid", accompagnement: "bg-ink" }[p.id]}`} />
                 <p className="font-display text-xl font-bold">{p.name}</p>
                 <p className={`mt-1 text-sm ${p.id === "premium" ? "text-white/80" : "text-mute"}`}>{p.summary}</p>
                 <p className="mt-5 font-display text-3xl font-bold">{formatPrice(p.price)}</p>
