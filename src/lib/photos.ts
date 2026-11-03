@@ -41,12 +41,23 @@ export const GGU = {
   name: "Galsen Gospel Urbain",
   short: "GGU",
   clip: "YvtkEgJyEwk",
+  site: "https://galsengospelurbain.com",
   instagram: "https://www.instagram.com/galsen_gospel_urbain/",
   tiktok: "https://www.tiktok.com/@galsen.gospel.urbain",
 };
 
 export const SUNU_IMPACT = {
   name: "Sunu Impact Festival",
-  partner: "ONG CMM Sénégal",
+  partner: "ONG Chaque Maison du Monde Sénégal",
   instagram: "https://www.instagram.com/sunu_impactfestival/",
+  site: "https://sunuimpactfestival.com",
+};
+
+// Affiches officielles des événements MGS
+const a = (name: string, alt: string, w: number, h: number): Photo => ({ src: `/photos/affiches/${name}.webp`, alt, w, h });
+export const POSTERS = {
+  ggu3: a("ggu3", "Affiche du Galsen Gospel Urbain 3, du 26 au 28 décembre 2025 au Centre culturel Blaise Senghor", 512, 640),
+  ggu3Chill: a("ggu3-chill", "Affiche du GGU Chill, vendredi 26 décembre au Centre culturel Blaise Senghor", 1000, 1250),
+  sunu2025: a("sunu-impact-2025", "Affiche du Sunu Impact Festival 2025 « Brille par ton talent », du 26 au 29 juin 2025", 864, 1080),
+  sunu2025Concert: a("sunu-impact-2025-concert", "Affiche du concert de célébration du Sunu Impact Festival, 29 juin 2025", 864, 1080),
 };

@@ -1,4 +1,4 @@
-import { GGU, GGU3, SUNU_IMPACT } from "./photos";
+import { GGU, GGU3, POSTERS, SUNU_IMPACT } from "./photos";
 
 // Événements portés ou accompagnés par MGS (faits fournis par l'équipe MGS)
 export type Realisation = {
@@ -16,9 +16,9 @@ export const REALISATIONS: Realisation[] = [
   {
     title: "Galsen Gospel Urbain 3",
     role: "Organisation",
-    date: "Décembre 2025",
-    place: "Dakar",
-    summary: "La 3e édition du festival du gospel urbain : le GGU Chill et le grand concert.",
+    date: "26 au 28 décembre 2025",
+    place: "Centre culturel Blaise Senghor, Dakar",
+    summary: "La 3e édition du festival du gospel urbain, sur le thème « Différents mais tous utiles » : le GGU Chill et le grand concert.",
     image: GGU3.sceneVerte,
     href: "/galsen-gospel-urbain",
   },
@@ -34,10 +34,11 @@ export const REALISATIONS: Realisation[] = [
   {
     title: SUNU_IMPACT.name,
     role: "Organisation",
-    date: "",
-    place: "Sénégal",
-    summary: `Festival organisé en partenariat avec l'${SUNU_IMPACT.partner}.`,
-    external: SUNU_IMPACT.instagram,
+    date: "26 au 29 juin 2025",
+    place: "Centre culturel Blaise Senghor, Dakar",
+    summary: `« Brille par ton talent » : panels, ateliers de formation, concert de danse et concert de célébration, avec l'${SUNU_IMPACT.partner}.`,
+    image: { ...POSTERS.sunu2025, poster: true },
+    external: SUNU_IMPACT.site,
   },
 ];
 
