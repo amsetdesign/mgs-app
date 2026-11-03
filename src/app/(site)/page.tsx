@@ -164,6 +164,9 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Actualités ===== */}
+      <div className="relative isolate overflow-hidden">
+        <div aria-hidden className="absolute -top-20 -right-24 -z-10 size-[420px] rounded-full bg-orchid/40 blur-[110px]" />
+        <div aria-hidden className="absolute bottom-0 -left-32 -z-10 size-[380px] rounded-full bg-[#f2b705]/15 blur-[110px]" />
       <section className="container-x py-16">
         <SectionHead eyebrow="Actualités" title="Le gospel, ici et maintenant" link={{ href: "/actualites", label: "Toutes les actualités" }} />
         {articles.length > 0 ? (
@@ -178,13 +181,17 @@ export default async function HomePage() {
         )}
       </section>
 
+      </div>
+
       {/* ===== Packs ===== */}
-      <section className="border-y border-line bg-white py-16">
+      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#f6ecf6] to-paper py-16">
+        <div aria-hidden className="absolute -bottom-32 left-1/3 -z-10 size-[420px] rounded-full bg-plum/15 blur-[120px]" />
         <div className="container-x">
           <SectionHead eyebrow="Promotion" title="Faites connaître votre projet" link={{ href: "/services", label: "Détail des packs" }} />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {PACKS.map((p) => (
-              <div key={p.id} className={`flex flex-col rounded-[var(--radius-card)] border p-6 ${p.id === "premium" ? "border-plum bg-plum text-white" : "border-line bg-paper"}`}>
+              <div key={p.id} className={`relative flex flex-col overflow-hidden rounded-[var(--radius-card)] p-6 shadow-[0_14px_30px_-20px_rgb(128_0_128/0.5)] ${p.id === "premium" ? "bg-gradient-to-br from-plum to-[#3c096c] text-white" : "bg-white"}`}>
+                <span aria-hidden className={`absolute inset-x-0 top-0 h-1.5 ${{ gratuit: "bg-[#1f9d55]", boost: "bg-[#f2b705]", premium: "bg-orchid", accompagnement: "bg-plum" }[p.id]}`} />
                 <p className="font-display text-xl font-bold">{p.name}</p>
                 <p className={`mt-1 text-sm ${p.id === "premium" ? "text-white/80" : "text-mute"}`}>{p.summary}</p>
                 <p className="mt-5 font-display text-3xl font-bold">{formatPrice(p.price)}</p>
