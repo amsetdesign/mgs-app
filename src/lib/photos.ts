@@ -35,6 +35,8 @@ export const GGU3 = {
   vainqueur: p("concert-vainqueur", "Remise du prix « Grand vainqueur » sur la scène du GGU 3", 1200, 1800),
   guitare: p("chill-guitare", "Un chanteur à la guitare au GGU Chill", 1024, 1536),
   rappeur: p("chill-rappeur", "Un rappeur au GGU Chill", 1536, 1024),
+  sweatBordeaux: p("concert-sweat-bordeaux", "Un rappeur en sweat bordeaux au micro pendant le grand concert du GGU 3", 1600, 1067),
+  bellusAnneaux: p("bellus-anneaux", "Bellus au micro dans les lumières du GGU 3", 1536, 1024),
 };
 
 export const GGU = {

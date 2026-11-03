@@ -98,9 +98,9 @@ export default async function HomePage() {
               <div className="relative col-span-4 aspect-[16/8] overflow-hidden rounded-[var(--radius-card)]">
                 <Image src={GGU3.collectifMicros.src} alt={GGU3.collectifMicros.alt} fill sizes="(min-width: 1024px) 45vw, 90vw" className="object-cover" />
               </div>
-              {[GGU3.artiste1, GGU3.rapStar, GGU3.auricia, GGU3.lhebreux].map((ph) => (
+              {[GGU3.bellusAnneaux, GGU3.vesteRouge, GGU3.costume, GGU3.sweatBordeaux].map((ph) => (
                 <div key={ph.src} className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)]">
-                  <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 12vw, 22vw" className="object-cover object-top" />
+                  <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 12vw, 22vw" className={`object-cover ${ph.h > ph.w ? "origin-[50%_30%] scale-[1.45] object-[50%_30%]" : "object-[50%_25%]"}`} />
                 </div>
               ))}
             </div>
