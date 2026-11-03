@@ -14,7 +14,7 @@ const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
 
 // ===== Projets soumis =====
 export async function updateSubmission(_prev: AdminState, fd: FormData): Promise<AdminState> {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const status = str(fd, "status");
   if (!(status in SUBMISSION_STATUS)) return { error: "Statut inconnu." };
   const { error } = await supabase
@@ -22,6 +22,7 @@ export async function updateSubmission(_prev: AdminState, fd: FormData): Promise
     .update({ status, payment_ref: str(fd, "payment_ref").slice(0, 120), admin_note: str(fd, "admin_note").slice(0, 2000) })
     .eq("id", str(fd, "id"));
   if (error) return { error: "Enregistrement impossible." };
+  await log("projet_statut", "submission", str(fd, "id"), SUBMISSION_STATUS[status as keyof typeof SUBMISSION_STATUS]);
   revalidatePath("/admin/soumissions");
   revalidatePath("/admin");
   return { ok: true, message: "Enregistré." };
@@ -29,20 +30,22 @@ export async function updateSubmission(_prev: AdminState, fd: FormData): Promise
 
 // ===== Événements =====
 export async function reviewEvent(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const approve = str(fd, "decision") === "approve";
   await supabase
     .from("events")
     .update({ status: approve ? "approved" : "rejected", review_note: approve ? "" : str(fd, "note").slice(0, 500) })
     .eq("id", str(fd, "id"));
+  await log(approve ? "evenement_publie" : "evenement_refuse", "event", str(fd, "id"), str(fd, "note"));
   revalidatePath("/admin/evenements");
   revalidatePath("/evenements");
   revalidatePath("/");
 }
 
 export async function deleteEvent(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   await supabase.from("events").delete().eq("id", str(fd, "id"));
+  await log("evenement_retire", "event", str(fd, "id"));
   revalidatePath("/admin/evenements");
   revalidatePath("/evenements");
   revalidatePath("/");
@@ -60,7 +63,7 @@ const articleSchema = z.object({
 });
 
 export async function saveArticle(_prev: AdminState, fd: FormData): Promise<AdminState> {
-  const { supabase, userId } = await requireAdmin();
+  const { supabase, userId, log } = await requireAdmin();
   const id = str(fd, "id");
   const parsed = articleSchema.safeParse({
     title: str(fd, "title"), slug: str(fd, "slug"), excerpt: str(fd, "excerpt"), body: str(fd, "body"),
@@ -91,6 +94,7 @@ export async function saveArticle(_prev: AdminState, fd: FormData): Promise<Admi
     const { error } = await supabase.from("articles").insert(row);
     if (error) return { error: error.code === "23505" ? "Cette adresse (slug) est déjà utilisée par un autre article." : "Enregistrement impossible." };
   }
+  await log(id ? "article_modifie" : "article_cree", "article", id, data.title);
   revalidatePath("/actualites");
   revalidatePath(`/actualites/${slug}`);
   revalidatePath("/");
@@ -99,8 +103,9 @@ export async function saveArticle(_prev: AdminState, fd: FormData): Promise<Admi
 }
 
 export async function deleteArticle(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   await supabase.from("articles").delete().eq("id", str(fd, "id"));
+  await log("article_supprime", "article", str(fd, "id"));
   revalidatePath("/actualites");
   revalidatePath("/");
   redirect("/admin/articles");
@@ -108,7 +113,7 @@ export async function deleteArticle(fd: FormData) {
 
 // ===== Titres envoyés depuis l'application =====
 export async function reviewSong(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireAdmin(); // tracé par la base (validation des titres)
   await supabase.rpc("review_song", { p_song: str(fd, "id"), p_approve: str(fd, "decision") === "approve", p_note: str(fd, "note").slice(0, 500) });
   revalidatePath("/admin/titres");
   revalidatePath("/");
@@ -118,7 +123,7 @@ export async function reviewSong(fd: FormData) {
 const urlOrEmpty = z.string().trim().max(300).refine((v) => v === "" || /^https?:\/\/\S+$/.test(v), "Les liens des réseaux doivent commencer par https://");
 
 export async function updateArtist(_prev: AdminState, fd: FormData): Promise<AdminState> {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const id = str(fd, "id");
   const userId = str(fd, "user_id");
   const socials = z.object({ social_facebook: urlOrEmpty, social_instagram: urlOrEmpty, social_tiktok: urlOrEmpty, social_youtube: urlOrEmpty }).safeParse({
@@ -141,6 +146,7 @@ export async function updateArtist(_prev: AdminState, fd: FormData): Promise<Adm
   if (e1 || e2) return { error: "Enregistrement impossible." };
 
   const { data } = await supabase.from("artists").select("slug").eq("id", id).maybeSingle();
+  await log("artiste_modifie", "artist", id, name);
   revalidatePath("/artistes");
   if (data?.slug) revalidatePath(`/artistes/${data.slug}`);
   revalidatePath("/");
@@ -158,7 +164,7 @@ export async function toggleMessage(fd: FormData) {
 
 // ===== Fiches artistes créées par l'équipe =====
 export async function createArtist(_prev: AdminState, fd: FormData): Promise<AdminState> {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const name = str(fd, "full_name");
   if (name.length < 2) return { error: "Indiquez le nom de l'artiste." };
   const photo = await uploadImage(fd.get("avatar") as File | null, "artists");
@@ -171,6 +177,7 @@ export async function createArtist(_prev: AdminState, fd: FormData): Promise<Adm
     p_featured: fd.get("featured") === "on",
   });
   if (error) return { error: "Création impossible. Vérifiez que le fichier SQL « MGS - 7 » a été exécuté." };
+  await log("artiste_cree", "artist", "", name);
   revalidatePath("/artistes");
   revalidatePath("/");
   revalidatePath("/admin/artistes");
@@ -184,7 +191,7 @@ const LINK_ERRORS: Record<string, string> = {
 };
 
 export async function linkArtist(_prev: AdminState, fd: FormData): Promise<AdminState> {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const email = str(fd, "email").toLowerCase();
   if (!/^\S+@\S+\.\S+$/.test(email)) return { error: "Adresse e-mail invalide." };
   const { error } = await supabase.rpc("admin_link_artist", { p_artist: str(fd, "id"), p_email: email });
@@ -192,6 +199,7 @@ export async function linkArtist(_prev: AdminState, fd: FormData): Promise<Admin
     const code = Object.keys(LINK_ERRORS).find((k) => error.message.includes(k));
     return { error: code ? LINK_ERRORS[code] : "Rattachement impossible." };
   }
+  await log("artiste_rattache", "artist", str(fd, "id"), email);
   revalidatePath("/admin/artistes");
   revalidatePath("/artistes");
   return { ok: true, message: "Fiche rattachée : l'artiste la gère maintenant depuis l'application." };
@@ -199,7 +207,7 @@ export async function linkArtist(_prev: AdminState, fd: FormData): Promise<Admin
 
 // ===== Catalogue =====
 export async function updateSong(_prev: AdminState, fd: FormData): Promise<AdminState> {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const title = str(fd, "title");
   if (title.length < 1) return { error: "Le titre est obligatoire." };
   const cover = await uploadImage(fd.get("cover") as File | null, "artists");
@@ -208,13 +216,14 @@ export async function updateSong(_prev: AdminState, fd: FormData): Promise<Admin
   if (cover) row.cover_url = cover.url;
   const { error } = await supabase.from("songs").update(row).eq("id", str(fd, "id"));
   if (error) return { error: "Enregistrement impossible." };
+  await log("titre_modifie", "song", str(fd, "id"), title);
   revalidatePath("/admin/catalogue");
   revalidatePath("/");
   return { ok: true, message: "Titre enregistré." };
 }
 
 export async function songAction(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const id = str(fd, "id");
   switch (str(fd, "do")) {
     case "publish":
@@ -233,6 +242,9 @@ export async function songAction(fd: FormData) {
       await supabase.from("songs").delete().eq("id", id);
       break;
   }
+  // la publication est déjà tracée par la base (validation d'un titre)
+  const labels: Record<string, string> = { unpublish: "titre_depublie", feature: "selection_ajout", unfeature: "selection_retrait", delete: "titre_supprime" };
+  if (labels[str(fd, "do")]) await log(labels[str(fd, "do")], "song", id);
   revalidatePath("/admin/catalogue");
   revalidatePath("/artistes", "layout");
   revalidatePath("/");
@@ -240,14 +252,17 @@ export async function songAction(fd: FormData) {
 
 // ===== Utilisateurs =====
 export async function setUserRole(fd: FormData) {
-  const { supabase } = await requireAdmin();
-  await supabase.rpc("admin_set_role", { p_user: str(fd, "id"), p_role: str(fd, "role") });
+  const { supabase, log } = await requireAdmin();
+  const { error } = await supabase.rpc("admin_set_role", { p_user: str(fd, "id"), p_role: str(fd, "role") });
+  if (!error) await log("role_change", "user", str(fd, "id"), str(fd, "role"));
   revalidatePath("/admin/utilisateurs");
 }
 
 export async function setUserSuspended(fd: FormData) {
-  const { supabase } = await requireAdmin();
-  await supabase.rpc("admin_set_suspended", { p_user: str(fd, "id"), p_suspended: str(fd, "suspended") === "true" });
+  const { supabase, log } = await requireAdmin();
+  const suspended = str(fd, "suspended") === "true";
+  const { error } = await supabase.rpc("admin_set_suspended", { p_user: str(fd, "id"), p_suspended: suspended });
+  if (!error) await log(suspended ? "compte_suspendu" : "compte_retabli", "user", str(fd, "id"));
   revalidatePath("/admin/utilisateurs");
   revalidatePath("/");
 }
@@ -264,7 +279,7 @@ const promoSchema = z.object({
 });
 
 export async function savePromotion(_prev: AdminState, fd: FormData): Promise<AdminState> {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const parsed = promoSchema.safeParse({
     kind: str(fd, "kind"), title: str(fd, "title"), subtitle: str(fd, "subtitle"), link_url: str(fd, "link_url"),
     placement: str(fd, "placement"), starts: str(fd, "starts"), ends: str(fd, "ends"),
@@ -291,16 +306,38 @@ export async function savePromotion(_prev: AdminState, fd: FormData): Promise<Ad
     starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString(),
   });
   if (error) return { error: "Enregistrement impossible. Vérifiez que le fichier SQL « MGS - 8 » a été exécuté." };
+  await log("mise_en_avant_creee", "promotion", "", `${d.title} (${d.starts} → ${d.ends})`);
   revalidatePath("/admin/mises-en-avant");
   revalidatePath("/");
   return { ok: true, message: "Mise en avant programmée." };
 }
 
 export async function promotionAction(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase, log } = await requireAdmin();
   const id = str(fd, "id");
   if (str(fd, "do") === "delete") await supabase.from("promotions").delete().eq("id", id);
   else await supabase.from("promotions").update({ active: str(fd, "do") === "activate" }).eq("id", id);
+  await log(`mise_en_avant_${str(fd, "do")}`, "promotion", id);
   revalidatePath("/admin/mises-en-avant");
+  revalidatePath("/");
+}
+
+// ===== Signalements =====
+export async function handleReport(fd: FormData) {
+  const { supabase, userId, log } = await requireAdmin();
+  const songId = str(fd, "song_id");
+  const todo = str(fd, "do");
+  if (todo === "unpublish" && songId) await supabase.from("songs").update({ is_published: false }).eq("id", songId);
+  const status = todo === "dismiss" ? "dismissed" : "resolved";
+  const resolution = todo === "unpublish" ? "Titre dépublié" : todo === "dismiss" ? "Signalement écarté" : "Traité";
+  // tous les signalements ouverts sur ce titre sont clos en même temps
+  await supabase
+    .from("reports")
+    .update({ status, resolution, handled_by: userId, handled_at: new Date().toISOString() })
+    .eq("song_id", songId)
+    .eq("status", "open");
+  await log(todo === "unpublish" ? "signalement_titre_depublie" : todo === "dismiss" ? "signalement_ecarte" : "signalement_traite", "song", songId);
+  revalidatePath("/admin/signalements");
+  revalidatePath("/admin");
   revalidatePath("/");
 }

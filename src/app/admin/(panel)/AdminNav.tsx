@@ -13,8 +13,11 @@ const ITEMS = [
   { href: "/admin/artistes", label: "Artistes" },
   { href: "/admin/utilisateurs", label: "Utilisateurs" },
   { href: "/admin/mises-en-avant", label: "Mises en avant" },
+  { href: "/admin/signalements", label: "Signalements" },
+  { href: "/admin/statistiques", label: "Statistiques" },
   { href: "/admin/messages", label: "Messages" },
   { href: "/admin/newsletter", label: "Newsletter" },
+  { href: "/admin/journal", label: "Journal" },
 ];
 
 export default function AdminNav() {

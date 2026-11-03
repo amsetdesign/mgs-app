@@ -71,7 +71,10 @@ function StreamsChart({ data }: { data: Stats["streams_by_day"] }) {
 
 export default async function DashboardPage() {
   const { supabase, name } = await requireAdmin();
-  const { data, error } = await supabase.rpc("admin_stats");
+  const [{ data, error }, { count: openReports }] = await Promise.all([
+    supabase.rpc("admin_stats"),
+    supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
+  ]);
   if (error || !data) {
     return (
       <div className="max-w-xl rounded-[var(--radius-card)] bg-white p-6">
@@ -86,6 +89,7 @@ export default async function DashboardPage() {
     { n: s.events_pending, label: "événement(s) à valider", href: "/admin/evenements" },
     { n: s.songs_pending, label: "titre(s) à écouter et valider", href: "/admin/titres" },
     { n: s.messages_new, label: "message(s) non traité(s)", href: "/admin/messages" },
+    { n: openReports ?? 0, label: "signalement(s) à examiner", href: "/admin/signalements" },
   ].filter((t) => t.n > 0);
 
   return (

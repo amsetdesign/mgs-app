@@ -2,6 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { sessionClient } from "@/lib/supabase/server";
 import { hasSupabase } from "@/lib/supabase/env";
+import { logAction } from "@/lib/audit";
 
 /** Administrateur = compte connecté dont le profil a le rôle admin (même règle que la base : is_admin()). */
 export async function getAdmin() {
@@ -19,5 +20,7 @@ export async function getAdmin() {
 export async function requireAdmin() {
   const admin = await getAdmin();
   if (!admin) redirect("/admin/connexion");
-  return admin;
+  // trace dans le journal de l'équipe, au nom de l'administrateur connecté
+  const log = (action: string, targetType = "", targetId = "", summary = "") => logAction(admin.supabase, admin.userId, action, targetType, targetId, summary);
+  return { ...admin, log };
 }
