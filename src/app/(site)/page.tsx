@@ -3,7 +3,7 @@ import { getArticles, getFeaturedArtists, getLatestSongs, getLivePromotions, get
 import PromoStrip from "@/components/PromoStrip";
 import { ArticleCard, ArtistCard, EmptyState, EventCard, SectionHead, toSongRow } from "@/components/Cards";
 import SongList from "@/components/SongList";
-import { IconCheck } from "@/components/icons";
+import { IconArrow, IconCheck } from "@/components/icons";
 import { PACKS } from "@/lib/site";
 import { formatPrice } from "@/lib/format";
 import HomeHero from "@/components/HomeHero";
@@ -100,27 +100,38 @@ export default async function HomePage() {
       </div>
 
       {/* ===== Festival GGU ===== */}
-      <section className="bg-ink py-16 text-white">
+      <section className="relative isolate overflow-hidden bg-ink py-16 text-white">
+        <div aria-hidden className="absolute -top-32 -left-24 -z-10 size-[460px] rounded-full bg-plum/45 blur-[120px]" />
+        <div aria-hidden className="absolute -right-24 -bottom-40 -z-10 size-[440px] rounded-full bg-[#1f9d55]/25 blur-[120px]" />
+        <div aria-hidden className="absolute top-1/3 right-1/3 -z-10 size-[300px] rounded-full bg-[#f2b705]/10 blur-[110px]" />
         <div className="container-x">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
               <p className="eyebrow text-orchid">Organisé par MGS</p>
               <h2 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">Galsen Gospel Urbain</h2>
+              <ul className="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
+                <li className="rounded-full bg-plum px-3 py-1.5">3e édition</li>
+                <li className="rounded-full bg-[#1f9d55] px-3 py-1.5">26 – 28 décembre 2025</li>
+                <li className="rounded-full bg-[#f2b705] px-3 py-1.5 text-ink">Entrée gratuite</li>
+                <li className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/15">Centre culturel Blaise Senghor</li>
+              </ul>
               <p className="mt-5 max-w-xl text-lg text-haze">
-                Le festival du gospel urbain à Dakar. La 3e édition, en décembre dernier, a réuni artistes et public autour du GGU Chill et du grand concert, avec une nouvelle génération d&apos;artistes gospel.
+                Le festival du gospel urbain à Dakar, sur le thème « Différents mais tous utiles » : le GGU Chill et le grand concert, avec une nouvelle génération d&apos;artistes gospel.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/galsen-gospel-urbain" className="btn-light">Découvrir le festival</Link>
-                <a href={GGU.instagram} target="_blank" rel="noopener noreferrer" className="btn-ghost text-white">Instagram du GGU</a>
+                <Link href="/galsen-gospel-urbain" className="btn-primary">Découvrir le festival <IconArrow className="size-4" /></Link>
+                <a href={GGU.instagram} target="_blank" rel="noopener noreferrer" className="btn bg-orchid px-6 text-ink hover:bg-white">Instagram du GGU</a>
+                <Link href="/contact?sujet=partenariat" className="btn-ghost text-white">Devenir partenaire</Link>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-3">
               {/* artistes du GGU 3 au micro (le clip est déjà en haut de page) */}
-              <div className="relative col-span-4 aspect-[16/8] overflow-hidden rounded-[var(--radius-card)]">
-                <Image src={GGU3.collectifMicros.src} alt={GGU3.collectifMicros.alt} fill sizes="(min-width: 1024px) 45vw, 90vw" className="object-cover" />
-              </div>
-              {[GGU3.bellusAnneaux, GGU3.vesteRouge, GGU3.costume, GGU3.sweatBordeaux].map((ph) => (
-                <div key={ph.src} className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)]">
+              <Link href="/galsen-gospel-urbain" className="group relative col-span-4 aspect-[16/8] overflow-hidden rounded-[var(--radius-card)] ring-2 ring-transparent transition-shadow hover:ring-orchid">
+                <Image src={GGU3.collectifMicros.src} alt={GGU3.collectifMicros.alt} fill sizes="(min-width: 1024px) 45vw, 90vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                <span className="absolute top-3 left-3 rounded-full bg-plum px-3 py-1 text-xs font-semibold shadow">Grand concert</span>
+              </Link>
+              {[GGU3.bellusAnneaux, GGU3.vesteRouge, GGU3.costume, GGU3.sweatBordeaux].map((ph, i) => (
+                <div key={ph.src} className={`relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] ring-2 ${["ring-plum", "ring-[#1f9d55]", "ring-[#f2b705]", "ring-orchid"][i]}`}>
                   <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 12vw, 22vw" className={`object-cover ${ph.h > ph.w ? "origin-[50%_30%] scale-[1.45] object-[50%_30%]" : "object-[50%_25%]"}`} />
                 </div>
               ))}
