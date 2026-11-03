@@ -61,66 +61,66 @@ export function NewsBlock({ articles }: { articles: Article[] }) {
   );
 }
 
-/**
- * Agenda : le prochain événement en grand (affiche + infos + billetterie), les suivants à droite.
- * La carte « Annoncer un événement » complète toujours la colonne.
- */
-export function EventsBlock({ events }: { events: EventItem[] }) {
-  const [next, ...rest] = events;
-  const others = rest.slice(0, 3);
+function EventFeature({ e, first }: { e: EventItem; first: boolean }) {
   return (
-    <div className="grid gap-5 lg:grid-cols-[1.55fr_1fr]">
-      <div className="grid overflow-hidden rounded-[var(--radius-card)] bg-white/[0.06] ring-1 ring-white/10 sm:grid-cols-[minmax(0,0.85fr)_1fr]">
-        <Link href={`/evenements/${next.slug}`} className="relative block overflow-hidden bg-black/30">
-          <Visual src={next.poster_url} alt={`Affiche : ${next.title}`} label={next.title} className="aspect-[3/4] size-full sm:aspect-auto" />
-          <span className="absolute top-4 left-4 rounded-full bg-orchid px-3 py-1 text-xs font-semibold text-ink shadow">Prochain rendez-vous</span>
-        </Link>
-        <div className="flex flex-col p-6">
-          <p className="eyebrow text-orchid">{EVENT_CATEGORIES[next.category]}</p>
-          <Link href={`/evenements/${next.slug}`} className="mt-2 font-display text-2xl leading-snug font-bold hover:underline sm:text-3xl">{next.title}</Link>
-          <p className="mt-1 text-sm text-haze">Organisé par {next.organizer}</p>
-          <ul className="mt-5 space-y-2.5 text-white/90">
-            <li className="flex items-start gap-2.5"><IconCalendar className="mt-0.5 size-5 shrink-0 text-orchid" /><span className="first-letter:uppercase">{formatDate(next.starts_at, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span></li>
-            <li className="flex items-start gap-2.5"><IconClock className="mt-0.5 size-5 shrink-0 text-orchid" />À partir de {formatTime(next.starts_at)}</li>
-            <li className="flex items-start gap-2.5"><IconPin className="mt-0.5 size-5 shrink-0 text-orchid" />{[next.venue, next.city].filter(Boolean).join(", ")}</li>
-          </ul>
-          <div className="mt-auto flex flex-wrap gap-2 pt-6">
-            {next.ticket_url && (
-              <a href={next.ticket_url} target="_blank" rel="noopener noreferrer" className="btn-primary min-h-10 px-5"><IconTicket className="size-4" />Billetterie</a>
-            )}
-            <Link href={`/evenements/${next.slug}`} className="btn min-h-10 bg-white px-5 text-ink hover:bg-orchid">Voir l&apos;événement</Link>
-          </div>
+    <div className="grid overflow-hidden rounded-[var(--radius-card)] bg-white/[0.06] ring-1 ring-white/10 sm:grid-cols-[minmax(0,0.8fr)_1fr]">
+      <Link href={`/evenements/${e.slug}`} className="relative block overflow-hidden bg-black/30">
+        <Visual src={e.poster_url} alt={`Affiche : ${e.title}`} label={e.title} className="aspect-[3/4] size-full sm:aspect-auto" />
+        {first && <span className="absolute top-3 left-3 rounded-full bg-orchid px-3 py-1 text-xs font-semibold text-ink shadow">Prochain rendez-vous</span>}
+      </Link>
+      <div className="flex flex-col p-5">
+        <p className="eyebrow text-orchid">{EVENT_CATEGORIES[e.category]}</p>
+        <Link href={`/evenements/${e.slug}`} className="mt-2 font-display text-xl leading-snug font-bold hover:underline sm:text-2xl">{e.title}</Link>
+        <p className="mt-1 text-sm text-haze">Organisé par {e.organizer}</p>
+        <ul className="mt-4 space-y-2 text-sm text-white/90">
+          <li className="flex items-start gap-2"><IconCalendar className="mt-0.5 size-4 shrink-0 text-orchid" /><span className="first-letter:uppercase">{formatDate(e.starts_at, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span></li>
+          <li className="flex items-start gap-2"><IconClock className="mt-0.5 size-4 shrink-0 text-orchid" />À partir de {formatTime(e.starts_at)}</li>
+          <li className="flex items-start gap-2"><IconPin className="mt-0.5 size-4 shrink-0 text-orchid" />{[e.venue, e.city].filter(Boolean).join(", ")}</li>
+        </ul>
+        <div className="mt-auto flex flex-wrap gap-2 pt-5">
+          {e.ticket_url && <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className="btn-primary min-h-10 px-4"><IconTicket className="size-4" />Billetterie</a>}
+          <Link href={`/evenements/${e.slug}`} className="btn min-h-10 bg-white px-4 text-ink hover:bg-orchid">Voir l&apos;événement</Link>
         </div>
       </div>
+    </div>
+  );
+}
 
-      <div className="flex flex-col gap-4">
-        {others.map((e) => (
-          <Link key={e.id} href={`/evenements/${e.slug}`} className="group flex items-center gap-4 rounded-[var(--radius-card)] bg-white/[0.06] p-3 ring-1 ring-white/10 hover:bg-white/[0.1]">
-            <span className="flex size-14 shrink-0 flex-col items-center justify-center rounded-xl bg-white leading-none text-ink">
-              <span className="font-display text-xl font-bold">{formatDate(e.starts_at, { day: "2-digit" })}</span>
-              <span className="text-[10px] font-semibold uppercase">{formatDate(e.starts_at, { month: "short" }).replace(".", "")}</span>
-            </span>
-            <span className="min-w-0">
-              <span className="block text-[11px] font-semibold tracking-wide text-orchid uppercase">{EVENT_CATEGORIES[e.category]}</span>
-              <span className="block truncate font-medium group-hover:underline">{e.title}</span>
-              <span className="block truncate text-xs text-haze">{e.city} · {formatTime(e.starts_at)}</span>
-            </span>
-          </Link>
-        ))}
-        <Link href="/evenements/soumettre" className="group flex flex-1 flex-col justify-center rounded-[var(--radius-card)] bg-gradient-to-br from-plum to-[#3c096c] p-5 ring-1 ring-white/10">
+/**
+ * Agenda : les deux prochains événements côte à côte avec leur affiche,
+ * les suivants en lignes, puis l'appel aux organisateurs.
+ */
+export function EventsBlock({ events }: { events: EventItem[] }) {
+  const featured = events.slice(0, 2);
+  const others = events.slice(2, 5);
+  return (
+    <div className="space-y-5">
+      <div className={`grid gap-5 ${featured.length > 1 ? "lg:grid-cols-2" : ""}`}>
+        {featured.map((e, i) => <EventFeature key={e.id} e={e} first={i === 0} />)}
+      </div>
+      {others.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-3">
+          {others.map((e) => (
+            <Link key={e.id} href={`/evenements/${e.slug}`} className="group flex items-center gap-4 rounded-[var(--radius-card)] bg-white/[0.06] p-3 ring-1 ring-white/10 hover:bg-white/[0.1]">
+              <span className="flex size-14 shrink-0 flex-col items-center justify-center rounded-xl bg-white leading-none text-ink">
+                <span className="font-display text-xl font-bold">{formatDate(e.starts_at, { day: "2-digit" })}</span>
+                <span className="text-[10px] font-semibold uppercase">{formatDate(e.starts_at, { month: "short" }).replace(".", "")}</span>
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[11px] font-semibold tracking-wide text-orchid uppercase">{EVENT_CATEGORIES[e.category]}</span>
+                <span className="block truncate font-medium group-hover:underline">{e.title}</span>
+                <span className="block truncate text-xs text-haze">{e.city} · {formatTime(e.starts_at)}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-card)] bg-gradient-to-br from-plum to-[#3c096c] p-5 ring-1 ring-white/10">
+        <div>
           <p className="font-display text-lg font-bold">Vous organisez un événement ?</p>
           <p className="mt-1 text-sm text-white/80">Annoncez-le gratuitement au calendrier gospel. Le formulaire vous signale les dates déjà prises.</p>
-          <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-plum">Annoncer un événement <IconArrow className="size-4" /></span>
-        </Link>
-        {others.length < 2 && (
-          <Link href="/evenements" className="group flex items-center justify-between gap-3 rounded-[var(--radius-card)] bg-white/[0.06] p-5 ring-1 ring-white/10 hover:bg-white/[0.1]">
-            <span>
-              <span className="block font-display text-lg font-bold">Tout le calendrier gospel</span>
-              <span className="block text-sm text-haze">Concerts, veillées et festivals à venir</span>
-            </span>
-            <IconArrow className="size-5 text-orchid" />
-          </Link>
-        )}
+        </div>
+        <Link href="/evenements/soumettre" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-plum">Annoncer un événement <IconArrow className="size-4" /></Link>
       </div>
     </div>
   );
