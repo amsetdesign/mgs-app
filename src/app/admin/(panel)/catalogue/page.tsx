@@ -7,7 +7,7 @@ import SongEditor from "./SongEditor";
 type Row = {
   id: string; title: string; genre: string; cover_url: string; audio_url: string; duration: number;
   streams_count: number; likes_count: number; is_published: boolean; review_status: "pending" | "approved" | "rejected";
-  featured_at: string | null; created_at: string;
+  featured_at: string | null; created_at: string; kind?: string;
   artists: { slug: string; profiles: { full_name: string } | null } | null;
 };
 
@@ -44,7 +44,7 @@ export default async function CataloguePage({ searchParams }: { searchParams: Pr
 
   let query = supabase
     .from("songs")
-    .select("id, title, genre, cover_url, audio_url, duration, streams_count, likes_count, is_published, review_status, featured_at, created_at, artists(slug, profiles(full_name))")
+    .select("id, title, genre, cover_url, audio_url, duration, streams_count, likes_count, is_published, review_status, featured_at, created_at, kind, artists(slug, profiles(full_name))")
     .order("created_at", { ascending: false })
     .limit(300);
   if (filter === "publie") query = query.eq("is_published", true);
@@ -91,6 +91,7 @@ export default async function CataloguePage({ searchParams }: { searchParams: Pr
                     <p className="flex flex-wrap items-center gap-2 font-medium">
                       {s.title}
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${st.cls}`}>{st.label}</span>
+                      {s.kind === "podcast" && <span className="rounded-full bg-orchid/40 px-2.5 py-0.5 text-xs font-semibold text-plum-700">Podcast</span>}
                       {s.featured_at && <span className="rounded-full bg-plum px-2.5 py-0.5 text-xs font-semibold text-white">Sélection MGS</span>}
                       {!playable && <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs text-mute">sans fichier audio</span>}
                     </p>
@@ -106,7 +107,7 @@ export default async function CataloguePage({ searchParams }: { searchParams: Pr
                 <details className="mt-2">
                   <summary className="cursor-pointer text-sm text-mute">Modifier, écouter, supprimer</summary>
                   {playable && <audio controls preload="none" src={s.audio_url} className="mt-3 w-full max-w-xl" />}
-                  <SongEditor id={s.id} title={s.title} genre={s.genre} />
+                  <SongEditor id={s.id} title={s.title} genre={s.genre} podcast={s.kind === "podcast"} />
                   <div className="mt-4 flex items-center gap-3 border-t border-line pt-3">
                     <span className="text-sm text-mute">Suppression définitive (écoutes et j&apos;aime compris) :</span>
                     <Act id={s.id} todo="delete" label="Supprimer le titre" danger />

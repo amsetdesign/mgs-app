@@ -113,7 +113,7 @@ export function getArtist(slug: string) {
 // ===== Titres =====
 export function getLatestSongs(limit = 8) {
   return safe([], async () => {
-    const { data } = await publicClient().from("songs").select(SONG_FIELDS).eq("is_published", true).order("created_at", { ascending: false }).limit(limit);
+    const { data } = await publicClient().from("songs").select(SONG_FIELDS).eq("is_published", true).eq("kind", "musique").order("created_at", { ascending: false }).limit(limit);
     return ((data ?? []) as unknown as Song[]).filter(isPlayable);
   });
 }
