@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { toggleTrack, usePlayback } from "@/lib/audio";
 import { IconHeadphones, IconPause, IconPlay } from "./icons";
 
 export type SongRow = {
@@ -15,11 +15,6 @@ export type SongRow = {
   plays?: number;
 };
 
-function playUrl(el: HTMLAudioElement, url: string) {
-  el.src = url;
-  return el.play();
-}
-
 function fmt(sec: number) {
   if (!sec || !Number.isFinite(sec)) return "";
   return `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, "0")}`;
@@ -27,34 +22,8 @@ function fmt(sec: number) {
 
 /** Liste de titres écoutables dans le navigateur : un seul titre joue à la fois. */
 export default function SongList({ songs, ranked = false, dark = false }: { songs: SongRow[]; ranked?: boolean; dark?: boolean }) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [current, setCurrent] = useState<string | null>(null);
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => () => audioRef.current?.pause(), []);
-
-  const toggle = (song: SongRow) => {
-    let audio = audioRef.current;
-    if (!audio) {
-      const el = new Audio();
-      el.preload = "none";
-      el.addEventListener("timeupdate", () => setProgress(el.duration ? el.currentTime / el.duration : 0));
-      el.addEventListener("play", () => setPlaying(true));
-      el.addEventListener("pause", () => setPlaying(false));
-      el.addEventListener("ended", () => { setPlaying(false); setProgress(0); });
-      audioRef.current = el;
-      audio = el;
-    }
-    if (current === song.id) {
-      if (audio.paused) audio.play().catch(() => {});
-      else audio.pause();
-      return;
-    }
-    setCurrent(song.id);
-    setProgress(0);
-    playUrl(audio, song.audio_url).catch(() => setPlaying(false));
-  };
+  const { id: current, playing, progress } = usePlayback();
+  const toggle = (song: SongRow) => toggleTrack(song.id, song.audio_url);
 
   const text = dark ? "text-white" : "text-ink";
   const sub = dark ? "text-haze" : "text-mute";
