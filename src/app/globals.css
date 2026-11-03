@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* ───────────── Identité MGS : violet du logo, noir, blanc ───────────── */
+@theme {
+  --color-plum: #800080; /* violet du logo */
+  --color-plum-700: #640064; /* survol des boutons */
+  --color-orchid: #e7a8e7; /* violet clair lisible sur fond noir */
+  --color-ink: #0c090f; /* noir de marque */
+  --color-night: #17111c; /* cartes sur fond noir */
+  --color-night-2: #221a29; /* bordures et survols sombres */
+  --color-paper: #faf8fb; /* fond de lecture */
+  --color-line: #e8e1ec;
+  --color-mute: #6d6474; /* texte secondaire sur fond clair */
+  --color-haze: #b9aec0; /* texte secondaire sur fond noir */
+
+  --font-display: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
+  --font-sans: var(--font-poppins), "Poppins", system-ui, sans-serif;
+
+  --radius-card: 18px;
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-plum);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-plum);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Classes maison (Tailwind 4 : @utility pour pouvoir les combiner avec les autres classes) */
+@utility container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+@utility eyebrow { @apply text-xs font-semibold uppercase tracking-[0.18em]; }
+@utility btn { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition-colors duration-200; }
+@utility btn-primary { @apply btn bg-plum text-white hover:bg-plum-700; }
+@utility btn-light { @apply btn bg-white text-ink hover:bg-orchid; }
+@utility btn-ghost { @apply btn border border-current/25 hover:border-current/60; }
+@utility field { @apply block w-full rounded-xl border border-line bg-white px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-mute/70 focus:border-plum; }
+@utility label { @apply mb-1.5 block text-sm font-medium text-ink; }
+
+/* Corps d'article (texte saisi dans l'administration) */
+.prose-mgs p { margin: 0 0 1.1em; line-height: 1.8; }
+.prose-mgs h2 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin: 1.6em 0 0.6em; }
+.prose-mgs h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin: 1.4em 0 0.5em; }
+.prose-mgs ul { list-style: disc; padding-left: 1.3em; margin: 0 0 1.1em; }
+.prose-mgs li { margin: 0.3em 0; line-height: 1.7; }
+.prose-mgs blockquote { border-left: 3px solid var(--color-plum); padding-left: 1em; font-style: italic; color: var(--color-mute); margin: 1.4em 0; }
+.prose-mgs a { color: var(--color-plum); text-decoration: underline; text-underline-offset: 3px; }
+.prose-mgs strong { font-weight: 600; }
