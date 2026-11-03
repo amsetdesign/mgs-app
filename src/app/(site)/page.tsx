@@ -7,6 +7,7 @@ import { IconCheck } from "@/components/icons";
 import { PACKS, SITE } from "@/lib/site";
 import { formatPrice, todayLong } from "@/lib/format";
 import HomeHero from "@/components/HomeHero";
+import Carousel from "@/components/Carousel";
 import Image from "next/image";
 import { GGU, GGU3 } from "@/lib/photos";
 
@@ -65,14 +66,13 @@ export default async function HomePage() {
       <section className="container-x pt-12 pb-16">
         <SectionHead eyebrow="Artistes à la une" title="Ceux qui portent le gospel" link={{ href: "/artistes", label: "Tous les artistes" }} />
         {artists.length > 0 ? (
-          // une seule ligne, défilable au doigt ou à la molette quand les artistes sont nombreux
-          <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:scroll-px-6 sm:px-6 [scrollbar-width:thin]">
+          <Carousel label="Artistes à la une">
             {artists.map((a) => (
               <div key={a.id} className="w-[42%] shrink-0 snap-start sm:w-[30%] lg:w-[calc((100%-5*1rem)/6)]">
                 <ArtistCard artist={a} />
               </div>
             ))}
-          </div>
+          </Carousel>
         ) : (
           <EmptyState title="Les fiches artistes arrivent" text="Vous êtes artiste gospel ? Envoyez-nous votre projet pour apparaître ici." action={{ href: "/soumettre", label: "Soumettre un projet" }} />
         )}
