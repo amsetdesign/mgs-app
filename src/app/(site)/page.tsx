@@ -9,7 +9,6 @@ import { formatPrice, todayLong } from "@/lib/format";
 import HomeHero from "@/components/HomeHero";
 import Image from "next/image";
 import { GGU, GGU3 } from "@/lib/photos";
-import YoutubeFacade from "@/components/YoutubeFacade";
 
 export const revalidate = 300;
 
@@ -33,7 +32,7 @@ export default async function HomePage() {
       <HomeHero article={articles[0] ?? null} today={todayLong()} />
 
       {/* ===== À écouter ===== */}
-      <section id="ecouter" className="container-x pt-20">
+      <section id="ecouter" className="container-x pt-12">
         <SectionHead
           eyebrow={chartIsTop ? "Top 5 de la semaine" : "À écouter"}
           title={chartIsTop ? "Les titres du moment" : "Dernières sorties"}
@@ -54,7 +53,7 @@ export default async function HomePage() {
 
       {/* ===== Sélection MGS ===== */}
       {selection.length > 0 && (
-        <section className="container-x pt-20">
+        <section className="container-x pt-12">
           <SectionHead eyebrow="Sélection MGS" title="Nos coups de cœur" />
           <div className="rounded-[var(--radius-card)] bg-white p-2 sm:p-4">
             <SongList songs={selection.map(toSongRow)} />
@@ -63,11 +62,16 @@ export default async function HomePage() {
       )}
 
       {/* ===== Artistes ===== */}
-      <section className="container-x py-20">
+      <section className="container-x pt-12 pb-16">
         <SectionHead eyebrow="Artistes à la une" title="Ceux qui portent le gospel" link={{ href: "/artistes", label: "Tous les artistes" }} />
         {artists.length > 0 ? (
-          <div className="grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 lg:grid-cols-4">
-            {artists.map((a) => <ArtistCard key={a.id} artist={a} />)}
+          // une seule ligne, défilable au doigt ou à la molette quand les artistes sont nombreux
+          <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:scroll-px-6 sm:px-6 [scrollbar-width:thin]">
+            {artists.map((a) => (
+              <div key={a.id} className="w-[42%] shrink-0 snap-start sm:w-[30%] lg:w-[calc((100%-5*1rem)/6)]">
+                <ArtistCard artist={a} />
+              </div>
+            ))}
           </div>
         ) : (
           <EmptyState title="Les fiches artistes arrivent" text="Vous êtes artiste gospel ? Envoyez-nous votre projet pour apparaître ici." action={{ href: "/soumettre", label: "Soumettre un projet" }} />
@@ -75,28 +79,28 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Festival GGU ===== */}
-      <section className="bg-ink py-20 text-white">
+      <section className="bg-ink py-16 text-white">
         <div className="container-x">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
               <p className="eyebrow text-orchid">Organisé par MGS</p>
               <h2 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">Galsen Gospel Urbain</h2>
               <p className="mt-5 max-w-xl text-lg text-haze">
-                Le festival du gospel urbain à Dakar. La 3e édition, en décembre dernier, a réuni artistes et public autour du GGU Chill et du grand concert. Revivez-la avec le clip officiel.
+                Le festival du gospel urbain à Dakar. La 3e édition, en décembre dernier, a réuni artistes et public autour du GGU Chill et du grand concert, avec une nouvelle génération d&apos;artistes gospel.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/galsen-gospel-urbain" className="btn-light">Découvrir le festival</Link>
                 <a href={GGU.instagram} target="_blank" rel="noopener noreferrer" className="btn-ghost text-white">Instagram du GGU</a>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {/* clip officiel du GGU 3 */}
-              <div className="col-span-2">
-                <YoutubeFacade id={GGU.clip} title="Galsen Gospel Urbain 3, le clip officiel" />
+            <div className="grid grid-cols-4 gap-3">
+              {/* artistes du GGU 3 au micro (le clip est déjà en haut de page) */}
+              <div className="relative col-span-4 aspect-[16/8] overflow-hidden rounded-[var(--radius-card)]">
+                <Image src={GGU3.collectifMicros.src} alt={GGU3.collectifMicros.alt} fill sizes="(min-width: 1024px) 45vw, 90vw" className="object-cover" />
               </div>
-              {[GGU3.denim, GGU3.casquette].map((ph) => (
-                <div key={ph.src} className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)]">
-                  <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 25vw, 45vw" className="object-cover object-top" />
+              {[GGU3.artiste1, GGU3.rapStar, GGU3.auricia, GGU3.lhebreux].map((ph) => (
+                <div key={ph.src} className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)]">
+                  <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 12vw, 22vw" className="object-cover object-top" />
                 </div>
               ))}
             </div>
@@ -105,7 +109,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Calendrier ===== */}
-      <section className="relative overflow-hidden bg-aubergine py-20 text-white">
+      <section className="relative overflow-hidden bg-aubergine py-16 text-white">
         <div aria-hidden className="pointer-events-none absolute -top-32 -right-24 size-[480px] rounded-full bg-plum/40 blur-[110px]" />
         <div className="container-x">
           <div className="relative">
@@ -128,7 +132,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Actualités ===== */}
-      <section className="container-x py-20">
+      <section className="container-x py-16">
         <SectionHead eyebrow="Actualités" title="Le gospel, ici et maintenant" link={{ href: "/actualites", label: "Toutes les actualités" }} />
         {articles.length > 0 ? (
           <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
@@ -143,7 +147,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Packs ===== */}
-      <section className="border-y border-line bg-white py-20">
+      <section className="border-y border-line bg-white py-16">
         <div className="container-x">
           <SectionHead eyebrow="Promotion" title="Faites connaître votre projet" link={{ href: "/services", label: "Détail des packs" }} />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

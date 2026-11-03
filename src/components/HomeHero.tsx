@@ -42,7 +42,7 @@ export default function HomeHero({ article, today }: Props) {
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-ink to-transparent" />
 
       {/* bandeau de la une : date et rubriques, comme un journal */}
-      <div className="border-b border-white/10">
+      <div>
         <div className="container-x flex h-11 items-center justify-between gap-4 text-xs">
           <p className="font-semibold tracking-wide text-white/80 uppercase">{today}</p>
           <nav aria-label="Rubriques" className="hidden gap-5 text-haze sm:flex">
