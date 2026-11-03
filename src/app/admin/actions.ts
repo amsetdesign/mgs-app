@@ -155,3 +155,44 @@ export async function toggleMessage(fd: FormData) {
   revalidatePath("/admin/messages");
   revalidatePath("/admin");
 }
+
+// ===== Fiches artistes créées par l'équipe =====
+export async function createArtist(_prev: AdminState, fd: FormData): Promise<AdminState> {
+  const { supabase } = await requireAdmin();
+  const name = str(fd, "full_name");
+  if (name.length < 2) return { error: "Indiquez le nom de l'artiste." };
+  const photo = await uploadImage(fd.get("avatar") as File | null, "artists");
+  if (photo && "error" in photo) return { error: photo.error };
+  const { error } = await supabase.rpc("admin_create_artist", {
+    p_name: name.slice(0, 80),
+    p_country: str(fd, "country").slice(0, 60) || "Sénégal",
+    p_bio: str(fd, "bio").slice(0, 5000),
+    p_avatar: photo?.url ?? "",
+    p_featured: fd.get("featured") === "on",
+  });
+  if (error) return { error: "Création impossible. Vérifiez que le fichier SQL « MGS - 7 » a été exécuté." };
+  revalidatePath("/artistes");
+  revalidatePath("/");
+  revalidatePath("/admin/artistes");
+  return { ok: true, message: `Fiche de ${name} créée.` };
+}
+
+const LINK_ERRORS: Record<string, string> = {
+  account_not_found: "Aucun compte de l'application n'utilise cet e-mail. L'artiste doit d'abord s'inscrire dans l'app.",
+  not_claimable: "Cette fiche est déjà reliée à un compte.",
+  target_has_songs: "Ce compte a déjà son propre espace artiste avec des titres : contactez le support technique.",
+};
+
+export async function linkArtist(_prev: AdminState, fd: FormData): Promise<AdminState> {
+  const { supabase } = await requireAdmin();
+  const email = str(fd, "email").toLowerCase();
+  if (!/^\S+@\S+\.\S+$/.test(email)) return { error: "Adresse e-mail invalide." };
+  const { error } = await supabase.rpc("admin_link_artist", { p_artist: str(fd, "id"), p_email: email });
+  if (error) {
+    const code = Object.keys(LINK_ERRORS).find((k) => error.message.includes(k));
+    return { error: code ? LINK_ERRORS[code] : "Rattachement impossible." };
+  }
+  revalidatePath("/admin/artistes");
+  revalidatePath("/artistes");
+  return { ok: true, message: "Fiche rattachée : l'artiste la gère maintenant depuis l'application." };
+}

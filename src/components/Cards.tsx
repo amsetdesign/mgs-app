@@ -72,7 +72,7 @@ export function EventCard({ event, dark = false }: { event: EventItem; dark?: bo
   return (
     <Link
       href={`/evenements/${event.slug}`}
-      className={`group flex gap-4 rounded-[var(--radius-card)] p-3 transition-colors ${dark ? "bg-night hover:bg-night-2" : "bg-white hover:shadow-[0_10px_30px_-15px_rgb(12_9_15/0.35)]"}`}
+      className={`group flex gap-4 rounded-[var(--radius-card)] p-3 transition-colors ${dark ? "bg-white/[0.06] ring-1 ring-white/10 hover:bg-white/[0.1]" : "bg-white hover:shadow-[0_10px_30px_-15px_rgb(12_9_15/0.35)]"}`}
     >
       <div className="relative w-24 shrink-0 overflow-hidden rounded-xl sm:w-28">
         <Visual src={event.poster_url} alt="" label={event.title} className="aspect-[3/4] w-full" />
@@ -99,7 +99,7 @@ export function EventCard({ event, dark = false }: { event: EventItem; dark?: bo
 
 export function EmptyState({ title, text, action, dark = false }: { title: string; text: string; action?: { href: string; label: string }; dark?: boolean }) {
   return (
-    <div className={`rounded-[var(--radius-card)] border border-dashed px-6 py-12 text-center ${dark ? "border-white/15 text-white" : "border-line bg-white"}`}>
+    <div className={`rounded-[var(--radius-card)] border border-dashed px-6 py-12 text-center ${dark ? "border-white/20 bg-white/[0.04] text-white" : "border-line bg-white"}`}>
       <p className="font-display text-xl font-semibold">{title}</p>
       <p className={`mx-auto mt-2 max-w-md ${dark ? "text-haze" : "text-mute"}`}>{text}</p>
       {action && <Link href={action.href} className="btn-primary mt-6">{action.label}</Link>}

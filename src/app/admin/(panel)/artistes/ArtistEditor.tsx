@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { updateArtist, type AdminState } from "../../actions";
 
 export type ArtistRow = {
-  id: string; user_id: string; slug: string; bio: string; verified: boolean; featured: boolean;
+  id: string; user_id: string; slug: string; bio: string; verified: boolean; featured: boolean; claimed: boolean;
   social_facebook: string; social_instagram: string; social_tiktok: string; social_youtube: string;
   profiles: { full_name: string; avatar_url: string; country: string } | null;
 };

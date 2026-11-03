@@ -69,7 +69,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Festival GGU ===== */}
-      <section className="bg-ink pt-20 text-white">
+      <section className="bg-ink py-20 text-white">
         <div className="container-x">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
@@ -95,8 +95,10 @@ export default async function HomePage() {
       </section>
 
       {/* ===== Calendrier ===== */}
-      <section className="bg-ink py-20 text-white">
+      <section className="relative overflow-hidden bg-aubergine py-20 text-white">
+        <div aria-hidden className="pointer-events-none absolute -top-32 -right-24 size-[480px] rounded-full bg-plum/40 blur-[110px]" />
         <div className="container-x">
+          <div className="relative">
           <SectionHead dark eyebrow="Calendrier gospel" title="Prochains événements" link={{ href: "/evenements", label: "Tout le calendrier" }} />
           {events.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
@@ -111,6 +113,7 @@ export default async function HomePage() {
               <Link href="/evenements/soumettre" className="btn-light">Annoncer un événement</Link>
             </div>
           )}
+          </div>
         </div>
       </section>
 
