@@ -5,6 +5,8 @@ import SongList from "@/components/SongList";
 import { IconArrow, IconCheck } from "@/components/icons";
 import { PACKS, SITE } from "@/lib/site";
 import { formatPrice } from "@/lib/format";
+import Image from "next/image";
+import { GGU, GGU3 } from "@/lib/photos";
 
 export const revalidate = 300;
 
@@ -23,7 +25,9 @@ export default async function HomePage() {
     <>
       {/* ===== Ouverture ===== */}
       <section className="relative overflow-hidden bg-ink text-white">
-        <div aria-hidden className="pointer-events-none absolute -top-40 right-[-10%] size-[620px] rounded-full bg-plum/35 blur-[120px]" />
+        <Image src={GGU3.heroStage.src} alt="" fill priority sizes="100vw" className="object-cover object-[70%_30%] opacity-60" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
         <div className="container-x relative grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:py-24">
           <div>
             <p className="eyebrow text-orchid">Le média du gospel au Sénégal</p>
@@ -62,6 +66,32 @@ export default async function HomePage() {
         ) : (
           <EmptyState title="Les fiches artistes arrivent" text="Vous êtes artiste gospel ? Envoyez-nous votre projet pour apparaître ici." action={{ href: "/soumettre", label: "Soumettre un projet" }} />
         )}
+      </section>
+
+      {/* ===== Festival GGU ===== */}
+      <section className="bg-ink pt-20 text-white">
+        <div className="container-x">
+          <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div>
+              <p className="eyebrow text-orchid">Organisé par MGS</p>
+              <h2 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">Galsen Gospel Urbain</h2>
+              <p className="mt-5 max-w-xl text-lg text-haze">
+                Le festival du gospel urbain à Dakar. La 3e édition, en décembre dernier, a réuni artistes et public autour du GGU Chill et du grand concert.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/galsen-gospel-urbain" className="btn-light">Découvrir le festival</Link>
+                <a href={GGU.instagram} target="_blank" rel="noopener noreferrer" className="btn-ghost text-white">Instagram du GGU</a>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[GGU3.louange, GGU3.artiste1, GGU3.chillScene2].map((ph, i) => (
+                <div key={ph.src} className={`relative overflow-hidden rounded-[var(--radius-card)] ${i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-[4/3]"}`}>
+                  <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ===== Calendrier ===== */}

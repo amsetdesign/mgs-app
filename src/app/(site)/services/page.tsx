@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { PACKS } from "@/lib/site";
+import { GGU3 } from "@/lib/photos";
 import { formatPrice } from "@/lib/format";
 import { IconCheck, IconMegaphone, IconMic, IconTicket } from "@/components/icons";
 
@@ -19,7 +21,9 @@ const SERVICES = [
 export default function ServicesPage() {
   return (
     <>
-      <section className="bg-ink pt-16 pb-14 text-white">
+      <section className="relative isolate overflow-hidden bg-ink pt-16 pb-14 text-white">
+        <Image src={GGU3.collectif.src} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-35" />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/60 via-ink/85 to-ink" />
         <div className="container-x">
           <p className="eyebrow text-orchid">Services</p>
           <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold tracking-tight sm:text-6xl">Donner de la voix à votre projet</h1>

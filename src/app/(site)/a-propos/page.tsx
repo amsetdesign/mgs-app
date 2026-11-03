@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { SITE } from "@/lib/site";
+import { GGU3, SUNU_IMPACT } from "@/lib/photos";
 
 export const metadata: Metadata = {
   title: "À propos",
@@ -62,6 +64,24 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="bg-ink py-20 text-white">
+        <div className="container-x max-w-5xl">
+          <p className="eyebrow text-orchid">Nos événements</p>
+          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">Sur le terrain, avec les artistes</h2>
+          <p className="mt-4 max-w-2xl text-haze">
+            MGS organise le festival Galsen Gospel Urbain, dont la 3e édition s&apos;est tenue en décembre 2025, ainsi que le {SUNU_IMPACT.name} avec l&apos;{SUNU_IMPACT.partner}.
+          </p>
+          <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
+            {[GGU3.publicConcert, GGU3.jaria, GGU3.chillScene1, GGU3.artiste1].map((ph) => (
+              <div key={ph.src} className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-card)]">
+                <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 768px) 25vw, 50vw" className="object-cover" />
+              </div>
+            ))}
+          </div>
+          <Link href="/galsen-gospel-urbain" className="btn-light mt-10">Le festival Galsen Gospel Urbain</Link>
         </div>
       </section>
 

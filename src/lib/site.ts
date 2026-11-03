@@ -5,19 +5,20 @@ export const SITE = {
   tagline: "La voix du gospel au Sénégal",
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.musicgospelsenegal.com").replace(/\/$/, ""),
   email: "musicgospelsenegal@gmail.com",
-  whatsapp: "", // format international sans +, ex. 221770000000
+  whatsapp: "221781672819", // format international sans +
+  phone: "+221 78 167 28 19",
   city: "Dakar, Sénégal",
   socials: {
-    facebook: "",
-    instagram: "",
-    tiktok: "",
-    youtube: "",
+    facebook: "https://www.facebook.com/musicgospelsenegal",
+    instagram: "https://www.instagram.com/musicgospel_senegal/",
+    tiktok: "https://www.tiktok.com/@music.gospel.senegal",
+    youtube: "https://www.youtube.com/@musicgospelsenegal",
   },
   // Liens des stores dès la publication de l'application
   appStore: "",
   playStore: "",
   // Paiement des packs (Wave / Orange Money), à renseigner avant la mise en ligne
-  payment: { wave: "", orangeMoney: "", holder: "" },
+  payment: { wave: "+221 78 167 28 19", orangeMoney: "+221 78 167 28 19", holder: "ASSOU MENSA MAWUGNON SETH" },
 };
 
 export const PACKS = [

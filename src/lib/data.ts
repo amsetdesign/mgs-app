@@ -84,12 +84,13 @@ async function safe<T>(fallback: T, run: () => Promise<T>): Promise<T> {
 }
 
 // ===== Artistes =====
-type ArtistWithCount = Artist & { songs: { count: number }[] };
+type ArtistWithSongs = Artist & { songs: { audio_url: string }[] };
 
 export function getArtists(): Promise<(Artist & { songCount: number })[]> {
   return safe([], async () => {
-    const { data } = await publicClient().from("artists").select(`${ARTIST_FIELDS}, songs(count)`).order("featured", { ascending: false }).order("streams_count", { ascending: false });
-    return ((data ?? []) as unknown as ArtistWithCount[]).map((a) => ({ ...a, songCount: a.songs?.[0]?.count ?? 0 }));
+    // seuls les titres réellement écoutables sont comptés (RLS : titres publiés uniquement)
+    const { data } = await publicClient().from("artists").select(`${ARTIST_FIELDS}, songs(audio_url)`).order("featured", { ascending: false }).order("streams_count", { ascending: false });
+    return ((data ?? []) as unknown as ArtistWithSongs[]).map(({ songs, ...a }) => ({ ...a, songCount: (songs ?? []).filter(isPlayable).length }));
   });
 }
 

@@ -25,11 +25,13 @@ export default function Footer() {
           ))}
           <Link href="/soumettre" className="text-haze hover:text-white">Soumettre un projet</Link>
           <Link href="/evenements/soumettre" className="text-haze hover:text-white">Annoncer un événement</Link>
+          <Link href="/galsen-gospel-urbain" className="text-haze hover:text-white">Festival GGU</Link>
           <Link href="/contact" className="text-haze hover:text-white">Contact</Link>
         </nav>
         <div className="text-sm">
           <p className="font-semibold">Nous joindre</p>
           <a href={`mailto:${SITE.email}`} className="mt-3 block break-all text-haze hover:text-white">{SITE.email}</a>
+          <a href={`tel:${SITE.phone.replace(/\s/g, "")}`} className="mt-2 block text-haze hover:text-white">{SITE.phone}</a>
           {SITE.whatsapp && <a href={`https://wa.me/${SITE.whatsapp}`} className="mt-2 block text-haze hover:text-white">WhatsApp</a>}
           <p className="mt-2 text-haze">{SITE.city}</p>
           <SocialLinks className="mt-6" />

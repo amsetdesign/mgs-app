@@ -14,7 +14,8 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob:${supabase}${r2} https://i.ytimg.com`,
+  // i.audiomack.com : anciennes pochettes et photos importées avant le passage sur R2
+  `img-src 'self' data: blob:${supabase}${r2} https://i.ytimg.com https://i.audiomack.com`,
   `media-src 'self' blob:${r2}`,
   "font-src 'self'",
   `connect-src 'self'${supabase}${r2Upload}`,
