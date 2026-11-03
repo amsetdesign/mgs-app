@@ -35,7 +35,7 @@ function StoreBadge({ href, top, name, icon }: { href: string; top: string; name
 /** Bloc de l'application mobile : vraie capture dans un téléphone et badges des stores. */
 export default function AppPromo() {
   return (
-    <section className="container-x pt-24 pb-16">
+    <section id="app" className="container-x scroll-mt-24 pt-24 pb-16">
       <div className="relative grid gap-10 overflow-visible rounded-[28px] bg-plum px-7 pt-10 text-white sm:px-12 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:pt-0">
         <div className="lg:py-14">
           <p className="eyebrow text-white/75">Application mobile</p>

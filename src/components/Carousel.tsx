@@ -33,7 +33,7 @@ export default function Carousel({ children, label }: { children: React.ReactNod
     if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: "smooth" });
   };
 
-  const arrow = "absolute top-[38%] z-10 size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ink shadow-[0_8px_24px_-8px_rgb(12_9_15/0.45)] ring-1 ring-line transition-opacity hover:bg-plum hover:text-white disabled:pointer-events-none disabled:opacity-0";
+  const arrow = "absolute top-[38%] z-10 size-11 -translate-y-1/2 items-center justify-center rounded-full bg-plum text-white shadow-[0_10px_24px_-8px_rgb(128_0_128/0.6)] transition-opacity hover:bg-plum-700 disabled:pointer-events-none disabled:opacity-0";
 
   return (
     <div className="relative" role="region" aria-roledescription="carrousel" aria-label={label}>

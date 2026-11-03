@@ -4,7 +4,7 @@ import { artistName } from "@/lib/data";
 import type { SongRow } from "./SongList";
 import { ARTICLE_CATEGORIES, EVENT_CATEGORIES } from "@/lib/labels";
 import { formatDate, formatTime } from "@/lib/format";
-import { IconBadge, IconCalendar, IconPin } from "./icons";
+import { IconArrow, IconBadge, IconCalendar, IconPin } from "./icons";
 
 function initials(name: string) {
   return name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -39,14 +39,20 @@ export function ArtistCard({ artist, dark = false }: { artist: Artist & { songCo
   const meta = [artist.profiles?.country, artist.songCount ? `${artist.songCount} titre${artist.songCount > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
   return (
     <Link href={`/artistes/${artist.slug}`} className="group block">
-      <div className="overflow-hidden rounded-[var(--radius-card)]">
+      <div className="relative overflow-hidden rounded-[var(--radius-card)] ring-2 ring-transparent transition-shadow group-hover:ring-plum">
         <Visual src={artist.profiles?.avatar_url ?? ""} alt={name} label={name} className="aspect-square w-full transition-transform duration-500 ease-[var(--ease-out-quart)] group-hover:scale-[1.04]" />
+        {artist.songCount ? (
+          <span className="absolute top-2 left-2 rounded-full bg-plum px-2.5 py-1 text-[11px] font-semibold text-white shadow">À écouter</span>
+        ) : null}
+        <span className="absolute right-2 bottom-2 flex size-9 translate-y-2 items-center justify-center rounded-full bg-white text-plum opacity-0 shadow transition-all group-hover:translate-y-0 group-hover:opacity-100">
+          <IconArrow className="size-4" />
+        </span>
       </div>
       <p className={`mt-3 flex items-center gap-1.5 font-display text-lg font-semibold leading-tight ${dark ? "text-white" : ""}`}>
         {name}
         {artist.verified && <IconBadge className={`size-4 ${dark ? "text-orchid" : "text-plum"}`} />}
       </p>
-      <p className={`text-sm ${dark ? "text-haze" : "text-mute"}`}>{meta || "Artiste gospel"}</p>
+      <p className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${dark ? "bg-white/10 text-haze" : "bg-orchid/35 text-plum-700"}`}>{meta || "Artiste gospel"}</p>
     </Link>
   );
 }
@@ -115,8 +121,12 @@ export function SectionHead({ eyebrow, title, link, dark = false }: { eyebrow: s
         <h2 className={`mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl ${dark ? "text-white" : ""}`}>{title}</h2>
       </div>
       {link && (
-        <Link href={link.href} className={`text-sm font-semibold underline-offset-4 hover:underline ${dark ? "text-orchid" : "text-plum"}`}>
+        <Link
+          href={link.href}
+          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${dark ? "bg-white/10 text-orchid hover:bg-orchid hover:text-ink" : "bg-plum/10 text-plum hover:bg-plum hover:text-white"}`}
+        >
           {link.label}
+          <IconArrow className="size-4" />
         </Link>
       )}
     </div>

@@ -33,21 +33,40 @@ export default async function HomePage() {
       {/* ===== Ouverture : une de média ===== */}
       <HomeHero article={articles[0] ?? null} />
 
-      {/* ===== À écouter ===== */}
+      {/* ===== À écouter : carte colorée sur fond clair ===== */}
+      <div className="relative isolate overflow-hidden">
+        <div aria-hidden className="absolute -top-24 -left-24 -z-10 size-[420px] rounded-full bg-orchid/40 blur-[110px]" />
+        <div aria-hidden className="absolute top-[40%] -right-32 -z-10 size-[460px] rounded-full bg-plum/20 blur-[120px]" />
       <section id="ecouter" className="container-x pt-12">
         <SectionHead
           eyebrow={chartIsTop ? "Top 5 de la semaine" : "À écouter"}
           title={chartIsTop ? "Les titres du moment" : "Dernières sorties"}
-          link={{ href: "/artistes", label: "Tous les artistes" }}
+          link={{ href: "#app", label: "Écouter dans l'app" }}
         />
-        <div className="rounded-[var(--radius-card)] bg-white p-2 sm:p-4">
-          {chart.length > 0 ? (
-            <SongList songs={chart.map(toSongRow)} ranked={chartIsTop} />
-          ) : (
-            <p className="px-2 py-10 text-center text-mute">Les premiers titres arrivent très bientôt.</p>
-          )}
+        <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
+          <div className="flex flex-col rounded-[var(--radius-card)] bg-gradient-to-br from-plum to-[#3c096c] p-2 text-white shadow-[0_20px_40px_-20px_rgb(128_0_128/0.6)] sm:p-4">
+            {chart.length > 0 ? (
+              <SongList songs={chart.map(toSongRow)} ranked={chartIsTop} dark />
+            ) : (
+              <p className="px-2 py-10 text-center text-white/80">Les premiers titres arrivent très bientôt.</p>
+            )}
+            <div className="mt-auto flex flex-wrap gap-2 px-2 pt-4 pb-1">
+              {chart[0] && <Link href={`/titres/${chart[0].id}`} className="btn min-h-10 bg-white px-5 text-plum hover:bg-orchid">Paroles et détails</Link>}
+              <Link href="/artistes" className="btn min-h-10 bg-white/15 px-5 text-white hover:bg-white/25">Tous les artistes</Link>
+            </div>
+          </div>
+          <div className="flex flex-col justify-between gap-4 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
+            <div>
+              <p className="font-display text-lg font-bold">Vous êtes artiste ?</p>
+              <p className="mt-1 text-sm text-mute">Publiez vos titres dans l&apos;application ou faites connaître votre nouvelle sortie sur nos plateformes.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/soumettre" className="btn-primary min-h-10 px-5">Soumettre un projet</Link>
+              <Link href="/services" className="btn min-h-10 bg-orchid/40 px-5 text-plum-700 hover:bg-orchid">Voir les packs</Link>
+            </div>
+          </div>
         </div>
-        <p className="mt-3 text-sm text-mute">{chartIsTop ? "Classement établi sur les écoutes réelles de l'application MGS." : "Écoutez ici, ou dans l'application MGS."}</p>
+        <p className="mt-3 text-sm text-mute">{chartIsTop ? "Classement établi sur les écoutes réelles de l'application MGS." : "Cliquez sur une pochette pour écouter ici, ou retrouvez tout dans l'application MGS."}</p>
       </section>
 
       {/* ===== Mises en avant programmées ===== */}
@@ -78,6 +97,7 @@ export default async function HomePage() {
           <EmptyState title="Les fiches artistes arrivent" text="Vous êtes artiste gospel ? Envoyez-nous votre projet pour apparaître ici." action={{ href: "/soumettre", label: "Soumettre un projet" }} />
         )}
       </section>
+      </div>
 
       {/* ===== Festival GGU ===== */}
       <section className="bg-ink py-16 text-white">
