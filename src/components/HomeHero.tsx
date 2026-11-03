@@ -1,8 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Article } from "@/lib/data";
-import { ARTICLE_CATEGORIES } from "@/lib/labels";
-import { formatDate } from "@/lib/format";
 import { GGU, GGU3, type Photo } from "@/lib/photos";
 import YoutubeFacade from "./YoutubeFacade";
 import { IconArrow, IconCalendar } from "./icons";
@@ -23,10 +20,9 @@ const FADE = {
   mixBlendMode: "lighten",
 } as const;
 
-type Props = { article: Article | null };
 
 /** Ouverture de l'accueil, façon une de média : date du jour, rubriques, clip du moment. */
-export default function HomeHero({ article }: Props) {
+export default function HomeHero() {
   return (
     <section className="relative isolate flex min-h-[calc(100dvh-4rem)] items-center overflow-hidden bg-ink text-white">
       <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
@@ -67,13 +63,6 @@ export default function HomeHero({ article }: Props) {
               <Link href="/galsen-gospel-urbain" className="shrink-0 text-xs font-semibold text-orchid hover:underline">Le festival</Link>
             </div>
           </div>
-          {article && (
-            <Link href={`/actualites/${article.slug}`} className="group block rounded-[24px] bg-night/85 p-5 ring-1 ring-white/10 backdrop-blur hover:bg-night-2">
-              <p className="eyebrow text-orchid">À la une · {ARTICLE_CATEGORIES[article.category]}</p>
-              <p className="mt-2 font-display text-xl leading-snug font-bold group-hover:underline">{article.title}</p>
-              <p className="mt-1 text-sm text-haze">{formatDate(article.published_at)}</p>
-            </Link>
-          )}
           <Link href="/evenements/soumettre" className="flex items-center gap-4 rounded-[24px] bg-night/85 p-4 ring-1 ring-white/10 backdrop-blur hover:bg-night-2">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/10"><IconCalendar className="size-6 text-orchid" /></span>
             <span className="min-w-0 flex-1">

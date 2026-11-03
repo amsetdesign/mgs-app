@@ -31,7 +31,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ===== Ouverture : une de média ===== */}
-      <HomeHero article={articles[0] ?? null} />
+      <HomeHero />
 
       {/* ===== À écouter : carte colorée sur fond clair ===== */}
       <div className="relative isolate overflow-hidden">
