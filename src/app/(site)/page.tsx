@@ -3,9 +3,10 @@ import { getArticles, getFeaturedArtists, getLatestSongs, getLivePromotions, get
 import PromoStrip from "@/components/PromoStrip";
 import { ArticleCard, ArtistCard, EmptyState, EventCard, SectionHead, toSongRow } from "@/components/Cards";
 import SongList from "@/components/SongList";
-import { IconArrow, IconCheck } from "@/components/icons";
+import { IconCheck } from "@/components/icons";
 import { PACKS, SITE } from "@/lib/site";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, todayLong } from "@/lib/format";
+import HomeHero, { NewsTicker, songLabel, tickerDate } from "@/components/HomeHero";
 import Image from "next/image";
 import { GGU, GGU3 } from "@/lib/photos";
 import YoutubeFacade from "@/components/YoutubeFacade";
@@ -25,39 +26,37 @@ export default async function HomePage() {
   const chart = top.length >= 3 ? top : latest.slice(0, 5);
   const chartIsTop = top.length >= 3;
 
+  // bandeau « En ce moment » : uniquement des informations réelles de la base
+  const ticker = [
+    ...latest.slice(0, 2).map((s) => ({ label: "Sortie", text: songLabel(s), href: `/titres/${s.id}` })),
+    ...events.slice(0, 2).map((e) => ({ label: "Agenda", text: `${e.title} · ${tickerDate(e.starts_at)}, ${e.city}`, href: `/evenements/${e.slug}` })),
+    ...articles.slice(0, 2).map((a) => ({ label: "Actu", text: a.title, href: `/actualites/${a.slug}` })),
+    { label: "Festival", text: "Revivez le Galsen Gospel Urbain 3 en vidéo", href: "/galsen-gospel-urbain" },
+    ...(artists.length > 0 ? [{ label: "Artistes", text: "Découvrez les artistes gospel du Sénégal", href: "/artistes" }] : []),
+    { label: "Promotion", text: "Artistes : faites connaître votre nouveau projet", href: "/soumettre" },
+  ];
+
   return (
     <>
-      {/* ===== Ouverture ===== */}
-      <section className="relative overflow-hidden bg-ink text-white">
-        <Image src={GGU3.heroStage.src} alt="" fill priority sizes="100vw" className="object-cover object-[70%_30%] opacity-60" />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
-        <div className="container-x relative grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:py-24">
-          <div>
-            <p className="eyebrow text-orchid">Le média du gospel au Sénégal</p>
-            <h1 className="mt-5 font-display text-[clamp(2.6rem,7vw,5rem)] leading-[0.98] font-bold tracking-tight">
-              Faire entendre le gospel sénégalais.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-haze">
-              Les artistes, les sorties et les événements gospel du Sénégal et de la francophonie, réunis au même endroit. Écoutez, découvrez, et faites connaître votre projet.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/soumettre" className="btn-primary">Soumettre un projet <IconArrow className="size-4" /></Link>
-              <Link href="/evenements" className="btn-ghost text-white">Voir le calendrier gospel</Link>
-            </div>
-          </div>
-          <div className="rounded-[28px] border border-white/10 bg-night/80 p-3 sm:p-5">
-            <div className="flex items-baseline justify-between px-2 pb-3">
-              <h2 className="font-display text-xl font-bold">{chartIsTop ? "Top 5 de la semaine" : "Dernières sorties"}</h2>
-              <span className="text-xs text-haze">{chartIsTop ? "Écoutes réelles sur l'app MGS" : "À écouter maintenant"}</span>
-            </div>
-            {chart.length > 0 ? (
-              <SongList songs={chart.map(toSongRow)} ranked={chartIsTop} dark />
-            ) : (
-              <p className="px-2 py-10 text-center text-haze">Les premiers titres arrivent très bientôt.</p>
-            )}
-          </div>
+      {/* ===== Ouverture : une de média ===== */}
+      <HomeHero article={articles[0] ?? null} nextEvent={events[0] ?? null} latestSong={latest[0] ?? null} today={todayLong()} />
+      <NewsTicker items={ticker} />
+
+      {/* ===== À écouter ===== */}
+      <section id="ecouter" className="container-x pt-20">
+        <SectionHead
+          eyebrow={chartIsTop ? "Top 5 de la semaine" : "À écouter"}
+          title={chartIsTop ? "Les titres du moment" : "Dernières sorties"}
+          link={{ href: "/artistes", label: "Tous les artistes" }}
+        />
+        <div className="rounded-[var(--radius-card)] bg-white p-2 sm:p-4">
+          {chart.length > 0 ? (
+            <SongList songs={chart.map(toSongRow)} ranked={chartIsTop} />
+          ) : (
+            <p className="px-2 py-10 text-center text-mute">Les premiers titres arrivent très bientôt.</p>
+          )}
         </div>
+        <p className="mt-3 text-sm text-mute">{chartIsTop ? "Classement établi sur les écoutes réelles de l'application MGS." : "Écoutez ici, ou dans l'application MGS."}</p>
       </section>
 
       {/* ===== Mises en avant programmées ===== */}

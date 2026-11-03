@@ -61,3 +61,6 @@ export const nowMs = () => Date.now();
 
 /** Date du jour au format AAAA-MM-JJ. */
 export const todayIso = () => new Date().toISOString().slice(0, 10);
+
+/** Date du jour en toutes lettres, heure de Dakar (bandeau de la une). */
+export const todayLong = () => formatDate(new Date().toISOString(), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
