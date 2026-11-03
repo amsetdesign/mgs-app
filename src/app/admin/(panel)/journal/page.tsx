@@ -31,6 +31,11 @@ const ACTIONS: Record<string, string> = {
   signalement_titre_depublie: "Signalement : titre dépublié",
   signalement_ecarte: "Signalement écarté",
   signalement_traite: "Signalement traité",
+  annonce_creee: "Annonce audio ajoutée",
+  annonce_pause: "Annonce audio en pause",
+  annonce_activate: "Annonce audio réactivée",
+  annonce_delete: "Annonce audio supprimée",
+  annonces_frequence: "Fréquence des annonces modifiée",
 };
 
 const ROLES: Record<string, string> = { listener: "auditeur", artist: "artiste", curator: "curateur", admin: "administrateur" };

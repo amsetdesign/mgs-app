@@ -35,3 +35,23 @@ export async function uploadImage(file: File | null, folder: "events" | "submiss
   if (!res.ok) return { error: "L'envoi de l'image a échoué. Réessayez." };
   return { url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_BASE!.replace(/\/$/, "")}/${key}` };
 }
+
+const AUDIO_TYPES: Record<string, string> = { "audio/mpeg": "mp3", "audio/mp3": "mp3", "audio/mp4": "m4a", "audio/x-m4a": "m4a", "audio/aac": "aac" };
+
+/** Fichier audio court (jingle, publicité) envoyé depuis l'administration, 8 Mo maximum. */
+export async function uploadShortAudio(file: File | null): Promise<UploadResult | null> {
+  if (!file || file.size === 0) return null;
+  const ext = AUDIO_TYPES[file.type] ?? (file.name.toLowerCase().endsWith(".mp3") ? "mp3" : file.name.toLowerCase().endsWith(".m4a") ? "m4a" : "");
+  if (!ext) return { error: "Audio : MP3 ou M4A uniquement." };
+  if (file.size > 8 * 1024 * 1024) return { error: "Fichier trop lourd (8 Mo maximum ; une annonce dure en général 10 à 30 secondes)." };
+  if (!r2Configured()) return { error: "L'envoi de fichiers n'est pas configuré." };
+  const key = `site/annonces/${crypto.randomUUID()}.${ext}`;
+  const client = new AwsClient({ accessKeyId: process.env.R2_ACCESS_KEY_ID!, secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!, service: "s3", region: "auto" });
+  const res = await client.fetch(`https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${process.env.R2_BUCKET}/${key}`, {
+    method: "PUT",
+    headers: { "Content-Type": ext === "mp3" ? "audio/mpeg" : "audio/mp4" },
+    body: await file.arrayBuffer(),
+  });
+  if (!res.ok) return { error: "L'envoi du fichier a échoué. Réessayez." };
+  return { url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_BASE!.replace(/\/$/, "")}/${key}` };
+}

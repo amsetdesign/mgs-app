@@ -13,6 +13,7 @@ const ITEMS = [
   { href: "/admin/artistes", label: "Artistes" },
   { href: "/admin/utilisateurs", label: "Utilisateurs" },
   { href: "/admin/mises-en-avant", label: "Mises en avant" },
+  { href: "/admin/annonces", label: "Annonces audio" },
   { href: "/admin/signalements", label: "Signalements" },
   { href: "/admin/statistiques", label: "Statistiques" },
   { href: "/admin/messages", label: "Messages" },

@@ -7,7 +7,7 @@ import { SITE } from "@/lib/site";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin";
-import { uploadImage } from "@/lib/r2";
+import { uploadImage, uploadShortAudio } from "@/lib/r2";
 import { slugify } from "@/lib/format";
 import { ARTICLE_CATEGORIES, SUBMISSION_STATUS } from "@/lib/labels";
 
@@ -365,4 +365,44 @@ export async function handleReport(fd: FormData) {
   revalidatePath("/admin/signalements");
   revalidatePath("/admin");
   revalidatePath("/");
+}
+
+// ===== Annonces audio (jingles MGS, publicités) =====
+export async function saveAudioAd(_prev: AdminState, fd: FormData): Promise<AdminState> {
+  const { supabase, log } = await requireAdmin();
+  const title = str(fd, "title");
+  if (title.length < 2) return { error: "Donnez un nom à l'annonce." };
+  const kind = str(fd, "kind") === "pub" ? "pub" : "jingle";
+  const file = await uploadShortAudio(fd.get("audio") as File | null);
+  if (!file) return { error: "Choisissez le fichier audio (MP3 ou M4A)." };
+  if ("error" in file) return { error: file.error };
+  const ends = str(fd, "ends");
+  const { error } = await supabase.from("audio_ads").insert({
+    kind, title: title.slice(0, 120), sponsor: str(fd, "sponsor").slice(0, 120), audio_url: file.url,
+    link_url: str(fd, "link_url").slice(0, 500),
+    starts_at: str(fd, "starts") ? new Date(`${str(fd, "starts")}T00:00:00Z`).toISOString() : new Date().toISOString(),
+    ends_at: /^\d{4}-\d{2}-\d{2}$/.test(ends) ? new Date(`${ends}T23:59:59Z`).toISOString() : null,
+  });
+  if (error) return { error: "Enregistrement impossible. Vérifiez que le fichier SQL « MGS - 18 » a été exécuté." };
+  await log("annonce_creee", "audio_ad", "", title);
+  revalidatePath("/admin/annonces");
+  return { ok: true, message: "Annonce enregistrée : elle sera diffusée dans l'application." };
+}
+
+export async function audioAdAction(fd: FormData) {
+  const { supabase, log } = await requireAdmin();
+  const id = str(fd, "id");
+  const todo = str(fd, "do");
+  if (todo === "delete") await supabase.from("audio_ads").delete().eq("id", id);
+  else await supabase.from("audio_ads").update({ active: todo === "activate" }).eq("id", id);
+  await log(`annonce_${todo}`, "audio_ad", id);
+  revalidatePath("/admin/annonces");
+}
+
+export async function setAdsEvery(fd: FormData) {
+  const { supabase, log } = await requireAdmin();
+  const n = Math.max(0, Math.min(20, Number(str(fd, "every")) || 0));
+  await supabase.from("app_config").upsert({ key: "ads_every", value: n, updated_at: new Date().toISOString() });
+  await log("annonces_frequence", "config", "ads_every", String(n));
+  revalidatePath("/admin/annonces");
 }
