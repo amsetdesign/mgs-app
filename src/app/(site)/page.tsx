@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getArticles, getFeaturedArtists, getLatestSongs, getLivePromotions, getSelection, getTopWeek, getUpcomingEvents } from "@/lib/data";
 import PromoStrip from "@/components/PromoStrip";
-import { ArticleCard, ArtistCard, EmptyState, EventCard, SectionHead, toSongRow } from "@/components/Cards";
+import { ArtistCard, EmptyState, SectionHead, toSongRow } from "@/components/Cards";
 import SongList from "@/components/SongList";
 import { IconArrow, IconCheck } from "@/components/icons";
 import { PACKS } from "@/lib/site";
@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/format";
 import HomeHero from "@/components/HomeHero";
 import Carousel from "@/components/Carousel";
 import AppPromo from "@/components/AppPromo";
+import { EventsBlock, NewsBlock } from "@/components/HomeSections";
 import Image from "next/image";
 import { GGU, GGU3 } from "@/lib/photos";
 
@@ -147,17 +148,9 @@ export default async function HomePage() {
           <div className="relative">
           <SectionHead dark eyebrow="Calendrier gospel" title="Prochains événements" link={{ href: "/evenements", label: "Tout le calendrier" }} />
           {events.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {events.map((e) => <EventCard key={e.id} event={e} dark />)}
-            </div>
+            <EventsBlock events={events} />
           ) : (
             <EmptyState dark title="Aucun événement annoncé pour l'instant" text="Organisateurs : annoncez votre concert, veillée ou festival. Le calendrier aide toute la communauté à éviter les dates en double." action={{ href: "/evenements/soumettre", label: "Annoncer un événement" }} />
-          )}
-          {events.length > 0 && (
-            <div className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-card)] border border-white/10 p-6">
-              <p className="max-w-xl text-haze">Vous organisez un événement ? Vérifiez la date dans le calendrier et annoncez-le : nous évitons ensemble les chevauchements.</p>
-              <Link href="/evenements/soumettre" className="btn-light">Annoncer un événement</Link>
-            </div>
           )}
           </div>
         </div>
@@ -170,12 +163,7 @@ export default async function HomePage() {
       <section className="container-x py-16">
         <SectionHead eyebrow="Actualités" title="Le gospel, ici et maintenant" link={{ href: "/actualites", label: "Toutes les actualités" }} />
         {articles.length > 0 ? (
-          <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-            <ArticleCard article={articles[0]} large />
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
-              {articles.slice(1, 4).map((a) => <ArticleCard key={a.id} article={a} />)}
-            </div>
-          </div>
+          <NewsBlock articles={articles} />
         ) : (
           <EmptyState title="Les premiers articles arrivent" text="Interviews, sorties, témoignages : l'actualité du gospel sénégalais sera publiée ici." />
         )}
