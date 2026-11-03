@@ -6,7 +6,7 @@ import SongList from "@/components/SongList";
 import { IconCheck } from "@/components/icons";
 import { PACKS, SITE } from "@/lib/site";
 import { formatPrice, todayLong } from "@/lib/format";
-import HomeHero, { NewsTicker, songLabel, tickerDate } from "@/components/HomeHero";
+import HomeHero from "@/components/HomeHero";
 import Image from "next/image";
 import { GGU, GGU3 } from "@/lib/photos";
 import YoutubeFacade from "@/components/YoutubeFacade";
@@ -26,21 +26,11 @@ export default async function HomePage() {
   const chart = top.length >= 3 ? top : latest.slice(0, 5);
   const chartIsTop = top.length >= 3;
 
-  // bandeau « En ce moment » : uniquement des informations réelles de la base
-  const ticker = [
-    ...latest.slice(0, 2).map((s) => ({ label: "Sortie", text: songLabel(s), href: `/titres/${s.id}` })),
-    ...events.slice(0, 2).map((e) => ({ label: "Agenda", text: `${e.title} · ${tickerDate(e.starts_at)}, ${e.city}`, href: `/evenements/${e.slug}` })),
-    ...articles.slice(0, 2).map((a) => ({ label: "Actu", text: a.title, href: `/actualites/${a.slug}` })),
-    { label: "Festival", text: "Revivez le Galsen Gospel Urbain 3 en vidéo", href: "/galsen-gospel-urbain" },
-    ...(artists.length > 0 ? [{ label: "Artistes", text: "Découvrez les artistes gospel du Sénégal", href: "/artistes" }] : []),
-    { label: "Promotion", text: "Artistes : faites connaître votre nouveau projet", href: "/soumettre" },
-  ];
 
   return (
     <>
       {/* ===== Ouverture : une de média ===== */}
-      <HomeHero article={articles[0] ?? null} nextEvent={events[0] ?? null} latestSong={latest[0] ?? null} today={todayLong()} />
-      <NewsTicker items={ticker} />
+      <HomeHero article={articles[0] ?? null} latestSong={latest[0] ?? null} today={todayLong()} />
 
       {/* ===== À écouter ===== */}
       <section id="ecouter" className="container-x pt-20">

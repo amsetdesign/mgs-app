@@ -72,11 +72,3 @@ body {
 .prose-mgs blockquote { border-left: 3px solid var(--color-plum); padding-left: 1em; font-style: italic; color: var(--color-mute); margin: 1.4em 0; }
 .prose-mgs a { color: var(--color-plum); text-decoration: underline; text-underline-offset: 3px; }
 .prose-mgs strong { font-weight: 600; }
-
-/* Bandeau « En ce moment » de l'accueil */
-.ticker-track { animation: ticker 45s linear infinite; }
-@keyframes ticker { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-  .ticker { overflow-x: auto; }
-  .ticker-track { animation: none !important; }
-}
