@@ -9,12 +9,11 @@ import { IconArrow, IconCalendar } from "./icons";
 
 // Artistes au micro sur la scène du GGU 3, fondus les uns dans les autres (position, taille, opacité)
 const WALL: { photo: Photo; cls: string }[] = [
-  { photo: GGU3.casquette, cls: "right-[-6%] top-[-8%] h-[115%] w-[42%] opacity-90" },
-  { photo: GGU3.vesteRouge, cls: "right-[24%] top-[-12%] h-[95%] w-[30%] opacity-75" },
-  { photo: GGU3.rappeur, cls: "right-[8%] bottom-[-18%] h-[70%] w-[40%] opacity-70" },
-  { photo: GGU3.denim, cls: "left-[34%] top-[-10%] h-[85%] w-[28%] opacity-60 hidden sm:block" },
-  { photo: GGU3.costume, cls: "left-[-8%] top-[-14%] h-[90%] w-[34%] opacity-45 hidden sm:block" },
-  { photo: GGU3.guitare, cls: "left-[18%] bottom-[-22%] h-[75%] w-[30%] opacity-30 hidden lg:block" },
+  // visages placés hors du bloc vidéo : bord droit et espace entre le texte et le bloc
+  { photo: GGU3.casquette, cls: "right-[-5%] top-[-6%] h-[112%] w-[28%] opacity-90" },
+  { photo: GGU3.vesteRouge, cls: "left-[38%] top-[-6%] h-[104%] w-[22%] opacity-80 hidden lg:block" },
+  { photo: GGU3.costume, cls: "left-[-8%] top-[-14%] h-[90%] w-[30%] opacity-35 hidden sm:block" },
+  { photo: GGU3.rappeur, cls: "left-[-6%] bottom-[-24%] h-[70%] w-[36%] opacity-30 hidden sm:block" },
 ];
 
 // fondu sur tous les bords : les photos se mêlent au fond sans cadre visible
@@ -24,10 +23,10 @@ const FADE = {
   mixBlendMode: "lighten",
 } as const;
 
-type Props = { article: Article | null; today: string };
+type Props = { article: Article | null };
 
 /** Ouverture de l'accueil, façon une de média : date du jour, rubriques, clip du moment. */
-export default function HomeHero({ article, today }: Props) {
+export default function HomeHero({ article }: Props) {
   return (
     <section className="relative isolate overflow-hidden bg-ink text-white">
       <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
@@ -41,20 +40,7 @@ export default function HomeHero({ article, today }: Props) {
       <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/70 via-ink/60 to-ink/95 lg:bg-gradient-to-r lg:from-ink lg:via-ink/55 lg:to-transparent" />
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-ink to-transparent" />
 
-      {/* bandeau de la une : date et rubriques, comme un journal */}
-      <div>
-        <div className="container-x flex h-11 items-center justify-between gap-4 text-xs">
-          <p className="font-semibold tracking-wide text-white/80 uppercase">{today}</p>
-          <nav aria-label="Rubriques" className="hidden gap-5 text-haze sm:flex">
-            <Link href="/artistes" className="hover:text-white">Artistes</Link>
-            <Link href="/actualites?rubrique=sortie" className="hover:text-white">Sorties</Link>
-            <Link href="/actualites?rubrique=interview" className="hover:text-white">Interviews</Link>
-            <Link href="/evenements" className="hover:text-white">Agenda</Link>
-          </nav>
-        </div>
-      </div>
-
-      <div className="container-x grid gap-10 pt-16 pb-20 lg:grid-cols-[1.25fr_1fr] lg:items-end lg:pt-24 lg:pb-24">
+      <div className="container-x grid gap-10 pt-14 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-24 lg:pt-20 lg:pb-24">
         <div>
           <p className="eyebrow text-orchid">Média · Musique · Artistes</p>
           <h1 className="mt-5 font-display text-[clamp(2.7rem,7.2vw,5.4rem)] leading-[0.95] font-bold tracking-tight">

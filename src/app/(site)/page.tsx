@@ -5,7 +5,7 @@ import { ArticleCard, ArtistCard, EmptyState, EventCard, SectionHead, toSongRow 
 import SongList from "@/components/SongList";
 import { IconCheck } from "@/components/icons";
 import { PACKS } from "@/lib/site";
-import { formatPrice, todayLong } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import HomeHero from "@/components/HomeHero";
 import Carousel from "@/components/Carousel";
 import AppPromo from "@/components/AppPromo";
@@ -31,7 +31,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ===== Ouverture : une de média ===== */}
-      <HomeHero article={articles[0] ?? null} today={todayLong()} />
+      <HomeHero article={articles[0] ?? null} />
 
       {/* ===== À écouter ===== */}
       <section id="ecouter" className="container-x pt-12">
