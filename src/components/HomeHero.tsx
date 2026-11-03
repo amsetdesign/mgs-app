@@ -28,7 +28,7 @@ type Props = { article: Article | null };
 /** Ouverture de l'accueil, façon une de média : date du jour, rubriques, clip du moment. */
 export default function HomeHero({ article }: Props) {
   return (
-    <section className="relative isolate overflow-hidden bg-ink text-white">
+    <section className="relative isolate flex min-h-[calc(100dvh-4rem)] items-center overflow-hidden bg-ink text-white">
       <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
         {WALL.map(({ photo, cls }, i) => (
           <div key={photo.src} className={`absolute ${cls}`} style={FADE}>
@@ -40,7 +40,7 @@ export default function HomeHero({ article }: Props) {
       <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/70 via-ink/60 to-ink/95 lg:bg-gradient-to-r lg:from-ink lg:via-ink/55 lg:to-transparent" />
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-ink to-transparent" />
 
-      <div className="container-x grid gap-10 pt-14 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-24 lg:pt-20 lg:pb-24">
+      <div className="container-x grid w-full gap-10 pt-14 pb-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-24 lg:pt-20 lg:pb-24">
         <div>
           <p className="eyebrow text-orchid">Média · Musique · Artistes</p>
           <h1 className="mt-5 font-display text-[clamp(2.7rem,7.2vw,5.4rem)] leading-[0.95] font-bold tracking-tight">
