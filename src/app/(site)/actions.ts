@@ -2,12 +2,15 @@
 
 import { z } from "zod";
 import { headers } from "next/headers";
+import { after } from "next/server";
+import { notifyTeam, sendMail } from "@/lib/mail";
+import { formatPrice } from "@/lib/format";
 import { publicClient } from "@/lib/supabase/public";
 import { hasSupabase } from "@/lib/supabase/env";
 import { getEventsOnDay } from "@/lib/data";
 import { uploadImage } from "@/lib/r2";
 import { PROJECT_TYPES, EVENT_CATEGORIES } from "@/lib/labels";
-import { PACKS } from "@/lib/site";
+import { PACKS, SITE } from "@/lib/site";
 
 export type FormState = { ok: boolean; message?: string; error?: string; fields?: Record<string, string> };
 
@@ -67,6 +70,13 @@ export async function sendContact(_prev: FormState, fd: FormData): Promise<FormS
   if (await tooMany("contact")) return { ok: false, error: "Trop de messages envoyés. Réessayez dans quelques minutes." };
   const { error } = await publicClient().from("contact_messages").insert(parsed.data);
   if (error) return { ok: false, error: "L'envoi a échoué. Réessayez ou écrivez-nous par e-mail." };
+  const m = parsed.data;
+  after(() => notifyTeam(`Message de ${m.name}`, {
+    title: "Nouveau message depuis le site",
+    paragraphs: [m.message],
+    rows: [["Nom", m.name], ["E-mail", m.email], ["Téléphone", m.phone || "–"], ["Sujet", m.subject]],
+    cta: { label: "Voir dans l'administration", href: `${SITE.url}/admin/messages` },
+  }, m.email));
   return { ok: true, message: "Merci, votre message est bien arrivé. L'équipe MGS vous répond rapidement." };
 }
 
@@ -106,6 +116,28 @@ export async function submitProject(_prev: FormState, fd: FormData): Promise<For
   if (error) return { ok: false, error: "L'envoi a échoué. Réessayez ou contactez-nous.", fields: raw };
 
   const pack = PACKS.find((p) => p.id === parsed.data.pack)!;
+  const d = parsed.data;
+  after(async () => {
+    await notifyTeam(`Projet soumis : ${d.title} (${pack.name})`, {
+      title: `${d.artist_name} a soumis « ${d.title} »`,
+      paragraphs: [d.description || "Pas de description."],
+      rows: [
+        ["Pack", `${pack.name} · ${formatPrice(pack.price)}`], ["Type", PROJECT_TYPES[d.project_type]], ["Sortie", d.release_date || "–"],
+        ["Téléphone", d.phone], ["E-mail", d.email], ["Pays", d.country], ["YouTube", d.youtube_url || "–"], ["Écoute", d.download_url || "–"], ["Réseaux", d.socials || "–"],
+      ],
+      cta: { label: "Traiter le projet", href: `${SITE.url}/admin/soumissions` },
+    }, d.email);
+    await sendMail(d.email, "Votre projet est bien arrivé chez MGS", {
+      title: `Merci ${d.artist_name}, votre projet est bien arrivé`,
+      paragraphs: pack.price === 0
+        ? [`L'équipe Music Gospel Sénégal va écouter « ${d.title} » et vous recontacter avant sa publication.`]
+        : [
+          `Vous avez choisi le pack ${pack.name} (${formatPrice(pack.price)}). L'équipe vérifie « ${d.title} » puis vous contacte pour le calendrier de diffusion.`,
+          `Paiement par Wave ou Orange Money au ${SITE.payment.wave}, au nom de ${SITE.payment.holder}. Indiquez le titre du projet dans le message du paiement.`,
+        ],
+      cta: { label: "Nous écrire sur WhatsApp", href: `https://wa.me/${SITE.whatsapp}` },
+    }, SITE.email);
+  });
   return {
     ok: true,
     message: pack.price === 0
@@ -151,6 +183,12 @@ export async function submitEvent(_prev: FormState, fd: FormData): Promise<FormS
 
   const { error } = await publicClient().from("events").insert({ ...rest, starts_at: startsAt.toISOString(), poster_url: poster?.url ?? "" });
   if (error) return { ok: false, error: "L'envoi a échoué. Réessayez ou contactez-nous.", fields: raw };
+  after(() => notifyTeam(`Événement à valider : ${rest.title}`, {
+    title: `${rest.organizer} annonce « ${rest.title} »`,
+    paragraphs: [rest.description || "Pas de description."],
+    rows: [["Date", `${date} à ${time}`], ["Lieu", [rest.venue, rest.city, rest.country].filter(Boolean).join(", ")], ["Contact", [rest.contact_phone, rest.contact_email].filter(Boolean).join(" · ")]],
+    cta: { label: "Valider l'événement", href: `${SITE.url}/admin/evenements` },
+  }, rest.contact_email || undefined));
   return { ok: true, message: "Événement reçu. L'équipe MGS le vérifie avant de l'ajouter au calendrier gospel." };
 }
 

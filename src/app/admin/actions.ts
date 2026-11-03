@@ -1,6 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { sendMail } from "@/lib/mail";
+import { SITE } from "@/lib/site";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin";
@@ -17,12 +20,27 @@ export async function updateSubmission(_prev: AdminState, fd: FormData): Promise
   const { supabase, log } = await requireAdmin();
   const status = str(fd, "status");
   if (!(status in SUBMISSION_STATUS)) return { error: "Statut inconnu." };
+  const { data: before } = await supabase.from("submissions").select("status, email, artist_name, title, admin_note").eq("id", str(fd, "id")).maybeSingle();
   const { error } = await supabase
     .from("submissions")
     .update({ status, payment_ref: str(fd, "payment_ref").slice(0, 120), admin_note: str(fd, "admin_note").slice(0, 2000) })
     .eq("id", str(fd, "id"));
   if (error) return { error: "Enregistrement impossible." };
   await log("projet_statut", "submission", str(fd, "id"), SUBMISSION_STATUS[status as keyof typeof SUBMISSION_STATUS]);
+  // l'artiste est prévenu des étapes qui le concernent
+  const MESSAGES: Record<string, string> = {
+    paye: "Nous avons bien reçu votre paiement. La diffusion de votre projet est en préparation.",
+    en_cours: "La promotion de votre projet est en cours sur les plateformes MGS.",
+    publie: "Votre projet est publié sur les plateformes MGS. Merci pour votre confiance, et n'hésitez pas à le partager.",
+    refuse: "Après écoute, l'équipe n'a pas retenu votre projet pour le moment. Vous pouvez nous écrire pour en savoir plus.",
+  };
+  if (before && before.status !== status && MESSAGES[status] && before.email) {
+    after(() => sendMail(before.email, `Votre projet « ${before.title} » : ${SUBMISSION_STATUS[status as keyof typeof SUBMISSION_STATUS].toLowerCase()}`, {
+      title: `Bonjour ${before.artist_name}`,
+      paragraphs: [MESSAGES[status]],
+      cta: { label: "Contacter l'équipe sur WhatsApp", href: `https://wa.me/${SITE.whatsapp}` },
+    }, SITE.email));
+  }
   revalidatePath("/admin/soumissions");
   revalidatePath("/admin");
   return { ok: true, message: "Enregistré." };
@@ -37,6 +55,13 @@ export async function reviewEvent(fd: FormData) {
     .update({ status: approve ? "approved" : "rejected", review_note: approve ? "" : str(fd, "note").slice(0, 500) })
     .eq("id", str(fd, "id"));
   await log(approve ? "evenement_publie" : "evenement_refuse", "event", str(fd, "id"), str(fd, "note"));
+  const { data: ev } = await supabase.from("events").select("title, slug, contact_email, organizer").eq("id", str(fd, "id")).maybeSingle();
+  if (ev?.contact_email) {
+    after(() => sendMail(ev.contact_email, approve ? `« ${ev.title} » est au calendrier gospel` : `Votre annonce « ${ev.title} »`, approve
+      ? { title: "Votre événement est publié", paragraphs: [`Bonjour ${ev.organizer}, « ${ev.title} » figure maintenant au calendrier gospel de Music Gospel Sénégal. Partagez la page autour de vous.`], cta: { label: "Voir la page de l'événement", href: `${SITE.url}/evenements/${ev.slug}` } }
+      : { title: "Votre annonce n'a pas été publiée", paragraphs: [`Bonjour ${ev.organizer}, l'équipe n'a pas pu publier « ${ev.title} » au calendrier.`, ...(str(fd, "note") ? [`Motif : ${str(fd, "note")}`] : []), "Vous pouvez nous écrire pour en discuter."] },
+      SITE.email));
+  }
   revalidatePath("/admin/evenements");
   revalidatePath("/evenements");
   revalidatePath("/");

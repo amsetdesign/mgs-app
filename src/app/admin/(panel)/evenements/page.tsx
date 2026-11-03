@@ -62,7 +62,7 @@ export default async function AdminEventsPage() {
               <form action={reviewEvent} className="mt-4 flex flex-wrap items-end gap-3 border-t border-line pt-4">
                 <input type="hidden" name="id" value={e.id} />
                 <label className="min-w-56 flex-1">
-                  <span className="label">Motif en cas de refus (interne)</span>
+                  <span className="label">Motif en cas de refus (envoyé à l&apos;organisateur)</span>
                   <input name="note" maxLength={500} className="field py-2.5" />
                 </label>
                 <button name="decision" value="reject" className="btn min-h-10 border border-red-300 text-red-700 hover:bg-red-50">Refuser</button>
