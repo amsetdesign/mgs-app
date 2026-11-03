@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { PACKS } from "@/lib/site";
 import { GGU3 } from "@/lib/photos";
+import Realisations from "@/components/Realisations";
 import { formatPrice } from "@/lib/format";
 import { IconCheck, IconMegaphone, IconMic, IconTicket } from "@/components/icons";
 
@@ -55,10 +56,15 @@ export default function ServicesPage() {
                 <ul className="mt-6 flex-1 space-y-2.5">
                   {p.features.map((f) => <li key={f} className="flex gap-2.5"><IconCheck className="mt-0.5 size-5 shrink-0" />{f}</li>)}
                 </ul>
-                <Link href={`/soumettre?pack=${p.id}`} className={`mt-8 ${hot ? "btn-light" : "btn-primary"}`}>Soumettre avec ce pack</Link>
+                <Link href={`/soumettre?pack=${p.id}`} className={`mt-8 ${hot ? "btn-light" : "btn-primary"}`}>Choisir ce pack</Link>
               </div>
             );
           })}
+        </div>
+        <div className="mt-20">
+          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Ils nous ont fait confiance</h2>
+          <p className="mt-3 max-w-2xl text-mute">Organisation de festivals, communication de concerts : quelques événements portés par MGS.</p>
+          <div className="mt-10"><Realisations /></div>
         </div>
         <div className="mt-14 flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-card)] bg-white p-7">
           <div>
