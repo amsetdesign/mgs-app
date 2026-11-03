@@ -7,6 +7,7 @@ import { PACKS, SITE } from "@/lib/site";
 import { formatPrice } from "@/lib/format";
 import Image from "next/image";
 import { GGU, GGU3 } from "@/lib/photos";
+import YoutubeFacade from "@/components/YoutubeFacade";
 
 export const revalidate = 300;
 
@@ -76,7 +77,7 @@ export default async function HomePage() {
               <p className="eyebrow text-orchid">Organisé par MGS</p>
               <h2 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">Galsen Gospel Urbain</h2>
               <p className="mt-5 max-w-xl text-lg text-haze">
-                Le festival du gospel urbain à Dakar. La 3e édition, en décembre dernier, a réuni artistes et public autour du GGU Chill et du grand concert.
+                Le festival du gospel urbain à Dakar. La 3e édition, en décembre dernier, a réuni artistes et public autour du GGU Chill et du grand concert. Revivez-la avec le clip officiel.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/galsen-gospel-urbain" className="btn-light">Découvrir le festival</Link>
@@ -84,9 +85,13 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {[GGU3.sceneVerte, GGU3.denim, GGU3.casquette].map((ph, i) => (
-                <div key={ph.src} className={`relative overflow-hidden rounded-[var(--radius-card)] ${i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-[4/5]"}`}>
-                  <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
+              {/* clip officiel du GGU 3 */}
+              <div className="col-span-2">
+                <YoutubeFacade id={GGU.clip} title="Galsen Gospel Urbain 3, le clip officiel" />
+              </div>
+              {[GGU3.denim, GGU3.casquette].map((ph) => (
+                <div key={ph.src} className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)]">
+                  <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 25vw, 45vw" className="object-cover object-top" />
                 </div>
               ))}
             </div>

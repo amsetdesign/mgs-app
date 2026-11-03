@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { GGU, GGU3, SUNU_IMPACT, type Photo } from "@/lib/photos";
-import { YoutubeEmbed } from "@/components/ArticleBody";
+import YoutubeFacade from "@/components/YoutubeFacade";
 import { IconInstagram, IconTiktok } from "@/components/icons";
 import { SITE } from "@/lib/site";
 
@@ -63,7 +63,7 @@ export default function GguPage() {
               <p><strong className="font-display">Le grand concert</strong> : la scène, les lumières et toute une salle en louange pour clôturer le festival.</p>
             </div>
           </div>
-          <YoutubeEmbed id={GGU.clip} title="Galsen Gospel Urbain, le clip du festival" />
+          <YoutubeFacade id={GGU.clip} title="Galsen Gospel Urbain 3, le clip officiel" />
         </div>
       </section>
 

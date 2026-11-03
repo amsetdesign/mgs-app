@@ -97,7 +97,10 @@ export function getArtists(): Promise<(Artist & { songCount: number })[]> {
 /** À la une : artistes mis en avant par l'équipe, puis ceux qui ont des titres publiés. */
 export async function getFeaturedArtists(limit = 8) {
   const all = await getArtists();
-  return all.filter((a) => a.featured || a.songCount > 0).slice(0, limit);
+  return all
+    .filter((a) => a.featured || a.songCount > 0)
+    .sort((x, y) => Number(y.songCount > 0) - Number(x.songCount > 0))
+    .slice(0, limit);
 }
 
 export function getArtist(slug: string) {

@@ -19,9 +19,9 @@ function inline(text: string, key: string) {
   return parts;
 }
 
-export function YoutubeEmbed({ id, title }: { id: string; title: string }) {
+export function YoutubeEmbed({ id, title, className = "my-8" }: { id: string; title: string; className?: string }) {
   return (
-    <div className="my-8 aspect-video overflow-hidden rounded-2xl bg-ink">
+    <div className={`${className} aspect-video overflow-hidden rounded-2xl bg-ink`}>
       <iframe
         src={`https://www.youtube-nocookie.com/embed/${id}`}
         title={title}
