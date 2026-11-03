@@ -204,3 +204,45 @@ export function getEventsOnDay(day: string) {
     );
   });
 }
+
+// ===== Sélection MGS et mises en avant =====
+export function getSelection(limit = 6) {
+  return safe([], async () => {
+    const { data } = await publicClient().from("songs").select(SONG_FIELDS).eq("is_published", true).not("featured_at", "is", null).order("featured_at", { ascending: false }).limit(limit);
+    return ((data ?? []) as unknown as Song[]).filter(isPlayable);
+  });
+}
+
+export type Promotion = {
+  id: string;
+  kind: "banner" | "song" | "artist" | "event";
+  title: string;
+  subtitle: string;
+  image_url: string;
+  link_url: string;
+  sponsored: boolean;
+  songs: { id: string; title: string; cover_url: string; artists: { slug: string } | null } | null;
+  artists: { slug: string; profiles: { full_name: string; avatar_url: string } | null } | null;
+  events: { slug: string; title: string; poster_url: string } | null;
+};
+
+/** Mises en avant en cours pour le site (la base ne renvoie que celles actives et dans leurs dates). */
+export function getLivePromotions(limit = 3) {
+  return safe([], async () => {
+    const { data } = await publicClient()
+      .from("promotions")
+      .select("id, kind, title, subtitle, image_url, link_url, sponsored, songs(id, title, cover_url, artists(slug)), artists(slug, profiles(full_name, avatar_url)), events(slug, title, poster_url)")
+      .in("placement", ["site", "both"])
+      .order("starts_at", { ascending: false })
+      .limit(limit);
+    return (data ?? []) as unknown as Promotion[];
+  });
+}
+
+/** Image et lien effectifs d'une mise en avant (repli sur le titre, l'artiste ou l'événement ciblé). */
+export function promotionTarget(p: Promotion) {
+  if (p.kind === "song" && p.songs) return { image: p.image_url || p.songs.cover_url, href: p.songs.artists ? `/artistes/${p.songs.artists.slug}` : "/" };
+  if (p.kind === "artist" && p.artists) return { image: p.image_url || p.artists.profiles?.avatar_url || "", href: `/artistes/${p.artists.slug}` };
+  if (p.kind === "event" && p.events) return { image: p.image_url || p.events.poster_url, href: `/evenements/${p.events.slug}` };
+  return { image: p.image_url, href: p.link_url || "/" };
+}

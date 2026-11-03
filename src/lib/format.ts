@@ -55,3 +55,9 @@ export function hoursAgoIso(hours: number) {
 export function isPast(iso: string, graceHours = 0) {
   return new Date(iso).getTime() < Date.now() - graceHours * 3600 * 1000;
 }
+
+/** Maintenant en millisecondes (hors rendu des composants : règle de pureté React). */
+export const nowMs = () => Date.now();
+
+/** Date du jour au format AAAA-MM-JJ. */
+export const todayIso = () => new Date().toISOString().slice(0, 10);

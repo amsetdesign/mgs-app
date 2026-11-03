@@ -196,3 +196,111 @@ export async function linkArtist(_prev: AdminState, fd: FormData): Promise<Admin
   revalidatePath("/artistes");
   return { ok: true, message: "Fiche rattachée : l'artiste la gère maintenant depuis l'application." };
 }
+
+// ===== Catalogue =====
+export async function updateSong(_prev: AdminState, fd: FormData): Promise<AdminState> {
+  const { supabase } = await requireAdmin();
+  const title = str(fd, "title");
+  if (title.length < 1) return { error: "Le titre est obligatoire." };
+  const cover = await uploadImage(fd.get("cover") as File | null, "artists");
+  if (cover && "error" in cover) return { error: cover.error };
+  const row: Record<string, unknown> = { title: title.slice(0, 160), genre: str(fd, "genre").slice(0, 40) || "Gospel" };
+  if (cover) row.cover_url = cover.url;
+  const { error } = await supabase.from("songs").update(row).eq("id", str(fd, "id"));
+  if (error) return { error: "Enregistrement impossible." };
+  revalidatePath("/admin/catalogue");
+  revalidatePath("/");
+  return { ok: true, message: "Titre enregistré." };
+}
+
+export async function songAction(fd: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = str(fd, "id");
+  switch (str(fd, "do")) {
+    case "publish":
+      await supabase.from("songs").update({ is_published: true, review_status: "approved", review_note: "" }).eq("id", id);
+      break;
+    case "unpublish":
+      await supabase.from("songs").update({ is_published: false }).eq("id", id);
+      break;
+    case "feature":
+      await supabase.from("songs").update({ featured_at: new Date().toISOString() }).eq("id", id);
+      break;
+    case "unfeature":
+      await supabase.from("songs").update({ featured_at: null }).eq("id", id);
+      break;
+    case "delete":
+      await supabase.from("songs").delete().eq("id", id);
+      break;
+  }
+  revalidatePath("/admin/catalogue");
+  revalidatePath("/artistes", "layout");
+  revalidatePath("/");
+}
+
+// ===== Utilisateurs =====
+export async function setUserRole(fd: FormData) {
+  const { supabase } = await requireAdmin();
+  await supabase.rpc("admin_set_role", { p_user: str(fd, "id"), p_role: str(fd, "role") });
+  revalidatePath("/admin/utilisateurs");
+}
+
+export async function setUserSuspended(fd: FormData) {
+  const { supabase } = await requireAdmin();
+  await supabase.rpc("admin_set_suspended", { p_user: str(fd, "id"), p_suspended: str(fd, "suspended") === "true" });
+  revalidatePath("/admin/utilisateurs");
+  revalidatePath("/");
+}
+
+// ===== Mises en avant =====
+const promoSchema = z.object({
+  kind: z.enum(["banner", "song", "artist", "event"]),
+  title: z.string().trim().min(2, "Titre trop court.").max(120),
+  subtitle: z.string().trim().max(240),
+  link_url: z.string().trim().max(500).refine((v) => v === "" || v.startsWith("/") || /^https?:\/\/\S+$/.test(v), "Lien : adresse complète (https://…) ou page du site (/…)."),
+  placement: z.enum(["site", "app", "both"]),
+  starts: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date de début invalide."),
+  ends: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date de fin invalide."),
+});
+
+export async function savePromotion(_prev: AdminState, fd: FormData): Promise<AdminState> {
+  const { supabase } = await requireAdmin();
+  const parsed = promoSchema.safeParse({
+    kind: str(fd, "kind"), title: str(fd, "title"), subtitle: str(fd, "subtitle"), link_url: str(fd, "link_url"),
+    placement: str(fd, "placement"), starts: str(fd, "starts"), ends: str(fd, "ends"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message };
+  const d = parsed.data;
+  const startsAt = new Date(`${d.starts}T00:00:00Z`);
+  const endsAt = new Date(`${d.ends}T23:59:59Z`);
+  if (endsAt <= startsAt) return { error: "La fin doit être après le début." };
+  const target = str(fd, "target");
+  if (d.kind !== "banner" && !target) return { error: "Choisissez le titre, l'artiste ou l'événement à mettre en avant." };
+  const image = await uploadImage(fd.get("image") as File | null, "articles");
+  if (image && "error" in image) return { error: image.error };
+  if (d.kind === "banner" && !image) return { error: "Une bannière a besoin d'une image." };
+
+  const { error } = await supabase.from("promotions").insert({
+    kind: d.kind, title: d.title, subtitle: d.subtitle, link_url: d.link_url, placement: d.placement,
+    image_url: image?.url ?? "",
+    song_id: d.kind === "song" ? target : null,
+    artist_id: d.kind === "artist" ? target : null,
+    event_id: d.kind === "event" ? target : null,
+    submission_id: str(fd, "submission_id") || null,
+    sponsored: fd.get("sponsored") === "on",
+    starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString(),
+  });
+  if (error) return { error: "Enregistrement impossible. Vérifiez que le fichier SQL « MGS - 8 » a été exécuté." };
+  revalidatePath("/admin/mises-en-avant");
+  revalidatePath("/");
+  return { ok: true, message: "Mise en avant programmée." };
+}
+
+export async function promotionAction(fd: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = str(fd, "id");
+  if (str(fd, "do") === "delete") await supabase.from("promotions").delete().eq("id", id);
+  else await supabase.from("promotions").update({ active: str(fd, "do") === "activate" }).eq("id", id);
+  revalidatePath("/admin/mises-en-avant");
+  revalidatePath("/");
+}

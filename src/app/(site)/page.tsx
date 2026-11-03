@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getArticles, getFeaturedArtists, getLatestSongs, getTopWeek, getUpcomingEvents } from "@/lib/data";
+import { getArticles, getFeaturedArtists, getLatestSongs, getLivePromotions, getSelection, getTopWeek, getUpcomingEvents } from "@/lib/data";
+import PromoStrip from "@/components/PromoStrip";
 import { ArticleCard, ArtistCard, EmptyState, EventCard, SectionHead, toSongRow } from "@/components/Cards";
 import SongList from "@/components/SongList";
 import { IconArrow, IconCheck } from "@/components/icons";
@@ -12,12 +13,14 @@ import YoutubeFacade from "@/components/YoutubeFacade";
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [top, latest, artists, events, articles] = await Promise.all([
+  const [top, latest, artists, events, articles, promotions, selection] = await Promise.all([
     getTopWeek(5),
     getLatestSongs(6),
     getFeaturedArtists(8),
     getUpcomingEvents({ limit: 4 }),
     getArticles({ limit: 4 }),
+    getLivePromotions(3),
+    getSelection(6),
   ]);
   const chart = top.length >= 3 ? top : latest.slice(0, 5);
   const chartIsTop = top.length >= 3;
@@ -56,6 +59,19 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ===== Mises en avant programmées ===== */}
+      <PromoStrip promotions={promotions} />
+
+      {/* ===== Sélection MGS ===== */}
+      {selection.length > 0 && (
+        <section className="container-x pt-20">
+          <SectionHead eyebrow="Sélection MGS" title="Nos coups de cœur" />
+          <div className="rounded-[var(--radius-card)] bg-white p-2 sm:p-4">
+            <SongList songs={selection.map(toSongRow)} />
+          </div>
+        </section>
+      )}
 
       {/* ===== Artistes ===== */}
       <section className="container-x py-20">

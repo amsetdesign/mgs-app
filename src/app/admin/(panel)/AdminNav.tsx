@@ -9,7 +9,10 @@ const ITEMS = [
   { href: "/admin/evenements", label: "Événements" },
   { href: "/admin/articles", label: "Articles" },
   { href: "/admin/titres", label: "Titres à valider" },
+  { href: "/admin/catalogue", label: "Catalogue" },
   { href: "/admin/artistes", label: "Artistes" },
+  { href: "/admin/utilisateurs", label: "Utilisateurs" },
+  { href: "/admin/mises-en-avant", label: "Mises en avant" },
   { href: "/admin/messages", label: "Messages" },
   { href: "/admin/newsletter", label: "Newsletter" },
 ];
