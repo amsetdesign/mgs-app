@@ -22,7 +22,7 @@ export default function ServicesPage() {
   return (
     <>
       <section className="relative isolate overflow-hidden bg-ink pt-16 pb-14 text-white">
-        <Image src={GGU3.collectif.src} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-35" />
+        <Image src={GGU3.collectifMicros.src} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-35" />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/60 via-ink/85 to-ink" />
         <div className="container-x">
           <p className="eyebrow text-orchid">Services</p>

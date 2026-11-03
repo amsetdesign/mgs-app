@@ -75,7 +75,7 @@ export default function AboutPage() {
             MGS organise le festival Galsen Gospel Urbain, dont la 3e édition s&apos;est tenue en décembre 2025, ainsi que le {SUNU_IMPACT.name} avec l&apos;{SUNU_IMPACT.partner}.
           </p>
           <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
-            {[GGU3.publicConcert, GGU3.jaria, GGU3.chillScene1, GGU3.artiste1].map((ph) => (
+            {[GGU3.denim, GGU3.costume, GGU3.guitare, GGU3.casquette].map((ph) => (
               <div key={ph.src} className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-card)]">
                 <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 768px) 25vw, 50vw" className="object-cover" />
               </div>

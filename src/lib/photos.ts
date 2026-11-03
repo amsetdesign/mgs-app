@@ -25,6 +25,16 @@ export const GGU3 = {
   chillScene2: p("chill-scene-2", "Les artistes réunis sur la scène du GGU Chill", 1248, 832),
   chillPublic: p("chill-public", "Le public du GGU Chill", 1248, 832),
   chillAssistance: p("chill-assistance", "L'assistance du GGU Chill", 1600, 1066),
+  // sélection choisie par l'équipe MGS (meilleurs plans)
+  sceneVerte: p("concert-scene-verte", "Les artistes réunis sur la scène du grand concert du GGU 3", 1800, 1200),
+  collectifMicros: p("concert-collectif-micros", "Quatre artistes au micro pendant le grand concert du GGU 3", 1800, 1200),
+  denim: p("concert-denim", "Une artiste sur scène dans la fumée violette du grand concert", 1200, 1800),
+  casquette: p("concert-casquette", "Un artiste chante sous les lumières du grand concert du GGU 3", 1200, 1800),
+  costume: p("concert-costume", "Un rappeur au micro sur la scène du GGU 3", 1200, 1800),
+  vesteRouge: p("concert-veste-rouge", "Une artiste en veste rouge sur la scène du GGU 3", 1024, 1536),
+  vainqueur: p("concert-vainqueur", "Remise du prix « Grand vainqueur » sur la scène du GGU 3", 1200, 1800),
+  guitare: p("chill-guitare", "Un chanteur à la guitare au GGU Chill", 1024, 1536),
+  rappeur: p("chill-rappeur", "Un rappeur au GGU Chill", 1536, 1024),
 };
 
 export const GGU = {

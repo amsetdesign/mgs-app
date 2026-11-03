@@ -38,7 +38,7 @@ export default function GguPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <section className="relative isolate overflow-hidden bg-ink text-white">
-        <Image src={GGU3.louange.src} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-55" />
+        <Image src={GGU3.sceneVerte.src} alt="" fill priority sizes="100vw" className="-z-10 object-cover opacity-55" />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
         <div className="container-x flex min-h-[70vh] flex-col justify-end pt-32 pb-14">
           <p className="eyebrow text-orchid">Un festival Music Gospel Sénégal</p>
@@ -71,14 +71,15 @@ export default function GguPage() {
         <div className="container-x">
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Le grand concert</h2>
           <div className="mt-8 grid auto-rows-[160px] grid-cols-2 gap-3 sm:auto-rows-[220px] lg:grid-cols-4">
+            <Shot photo={GGU3.collectifMicros} className="col-span-2 row-span-2" sizes="(min-width: 1024px) 50vw, 100vw" />
+            <Shot photo={GGU3.denim} className="row-span-2" />
+            <Shot photo={GGU3.casquette} className="row-span-2" />
+            <Shot photo={GGU3.costume} className="row-span-2" />
+            <Shot photo={GGU3.vesteRouge} className="row-span-2" />
+            <Shot photo={GGU3.heroStage} className="col-span-2 row-span-2" sizes="(min-width: 1024px) 50vw, 100vw" />
+            <Shot photo={GGU3.vainqueur} className="row-span-2" />
+            <Shot photo={GGU3.artiste3} className="row-span-2" />
             <Shot photo={GGU3.publicConcert} className="col-span-2 row-span-2" sizes="(min-width: 1024px) 50vw, 100vw" />
-            <Shot photo={GGU3.artiste1} className="row-span-2" />
-            <Shot photo={GGU3.sceneBleue} className="row-span-2" />
-            <Shot photo={GGU3.artiste2} className="col-span-2" />
-            <Shot photo={GGU3.groupe} />
-            <Shot photo={GGU3.artiste3} />
-            <Shot photo={GGU3.collectif} className="col-span-2" />
-            <Shot photo={GGU3.heroStage} className="col-span-2" sizes="(min-width: 1024px) 50vw, 100vw" />
           </div>
         </div>
       </section>
@@ -86,11 +87,11 @@ export default function GguPage() {
       <section className="container-x py-20">
         <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Le GGU Chill</h2>
         <div className="mt-8 grid auto-rows-[160px] grid-cols-2 gap-3 sm:auto-rows-[220px] lg:grid-cols-4">
-          <Shot photo={GGU3.chillScene2} className="col-span-2 row-span-2" sizes="(min-width: 1024px) 50vw, 100vw" />
+          <Shot photo={GGU3.rappeur} className="col-span-2 row-span-2" sizes="(min-width: 1024px) 50vw, 100vw" />
           <Shot photo={GGU3.laPlume} className="row-span-2" />
-          <Shot photo={GGU3.johnDarc} className="row-span-2" />
+          <Shot photo={GGU3.guitare} className="row-span-2" />
           <Shot photo={GGU3.auricia} className="col-span-2" />
-          <Shot photo={GGU3.jerryBorel} />
+          <Shot photo={GGU3.chillScene2} />
           <Shot photo={GGU3.rapStar} />
           <Shot photo={GGU3.lhebreux} className="col-span-2" />
           <Shot photo={GGU3.chillPublic} className="col-span-2" />

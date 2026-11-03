@@ -84,8 +84,8 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {[GGU3.louange, GGU3.artiste1, GGU3.chillScene2].map((ph, i) => (
-                <div key={ph.src} className={`relative overflow-hidden rounded-[var(--radius-card)] ${i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-[4/3]"}`}>
+              {[GGU3.sceneVerte, GGU3.denim, GGU3.casquette].map((ph, i) => (
+                <div key={ph.src} className={`relative overflow-hidden rounded-[var(--radius-card)] ${i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-[4/5]"}`}>
                   <Image src={ph.src} alt={ph.alt} fill sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
                 </div>
               ))}
