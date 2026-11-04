@@ -263,3 +263,17 @@ export function getSong(id: string) {
     return song && isPlayable(song) ? song : null;
   });
 }
+
+/** Événements validés d'une année (heure de Dakar), pour le calendrier annuel. */
+export function getEventsOfYear(year: number) {
+  return safe([], async () => {
+    const { data } = await publicClient()
+      .from("events")
+      .select("slug, title, city, starts_at, category")
+      .gte("starts_at", `${year}-01-01T00:00:00Z`)
+      .lt("starts_at", `${year + 1}-01-01T00:00:00Z`)
+      .order("starts_at")
+      .limit(1000);
+    return (data ?? []) as Pick<EventItem, "slug" | "title" | "city" | "starts_at" | "category">[];
+  });
+}

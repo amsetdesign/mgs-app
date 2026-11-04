@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { eventsOnDay, submitEvent, type FormState } from "../../actions";
 import { EVENT_CATEGORIES, type EventCategory } from "@/lib/labels";
 import { Field, FormError, FormSuccess, Honeypot } from "@/components/FormBits";
 
 type Clash = { title: string; city: string; organizer: string; starts_at: string };
 
-export default function EventForm() {
+export default function EventForm({ initialDate = "" }: { initialDate?: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(submitEvent, { ok: false });
   const [clashes, setClashes] = useState<Clash[] | null>(null);
   const [checking, startCheck] = useTransition();
@@ -19,6 +19,15 @@ export default function EventForm() {
     if (!day) return setClashes(null);
     startCheck(async () => setClashes(await eventsOnDay(day)));
   };
+
+  // date choisie dans le calendrier annuel : vérifiée dès l'ouverture
+  useEffect(() => {
+    if (!initialDate) return;
+    startCheck(async () => {
+      const found = await eventsOnDay(initialDate);
+      setClashes(found);
+    });
+  }, [initialDate]);
 
   if (state.ok) {
     return (
@@ -48,7 +57,7 @@ export default function EventForm() {
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Date" required>
-            <input name="date" type="date" required min={today} defaultValue={f.date} className="field" onChange={(e) => checkDate(e.target.value)} />
+            <input name="date" type="date" required min={today} defaultValue={f.date || initialDate} className="field" onChange={(e) => checkDate(e.target.value)} />
           </Field>
           <Field label="Heure de début" required>
             <input name="time" type="time" required defaultValue={f.time || "18:00"} className="field" />
@@ -63,7 +72,11 @@ export default function EventForm() {
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 {clashes.map((c) => <li key={`${c.title}-${c.starts_at}`}>{c.title}, {c.city} ({c.organizer})</li>)}
               </ul>
-              <p className="mt-2">Vous pouvez maintenir votre date, mais pensez au public commun.</p>
+              <p className="mt-2">Pour que le public puisse aller à chaque événement, nous vous conseillons de choisir une autre date (<Link href="/evenements#calendrier" className="underline">voir les dates libres</Link>).</p>
+              <label className="mt-3 flex items-start gap-2 font-medium">
+                <input type="checkbox" name="maintain" className="mt-0.5 size-4 accent-[var(--color-plum)]" />
+                Je maintiens cette date malgré l&apos;événement déjà prévu.
+              </label>
             </div>
           )}
         </div>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getEventCities, getUpcomingEvents } from "@/lib/data";
+import { getEventCities, getEventsOfYear, getUpcomingEvents } from "@/lib/data";
+import YearCalendar from "@/components/YearCalendar";
 import { EmptyState, EventCard } from "@/components/Cards";
 import { EVENT_CATEGORIES, type EventCategory } from "@/lib/labels";
-import { formatDate } from "@/lib/format";
+import { formatDate, todayIso } from "@/lib/format";
 
 export const revalidate = 300;
 
@@ -13,10 +14,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/evenements" },
 };
 
-export default async function EventsPage({ searchParams }: { searchParams: Promise<{ ville?: string; categorie?: string }> }) {
-  const { ville, categorie } = await searchParams;
+export default async function EventsPage({ searchParams }: { searchParams: Promise<{ ville?: string; categorie?: string; annee?: string }> }) {
+  const { ville, categorie, annee } = await searchParams;
+  const today = todayIso();
+  const thisYear = Number(today.slice(0, 4));
+  const year = Math.min(thisYear + 3, Math.max(thisYear - 1, Number(annee) || thisYear));
   const category = categorie && categorie in EVENT_CATEGORIES ? (categorie as EventCategory) : undefined;
-  const [events, cities] = await Promise.all([getUpcomingEvents({ city: ville, category }), getEventCities()]);
+  const [events, cities, yearEvents] = await Promise.all([getUpcomingEvents({ city: ville, category }), getEventCities(), getEventsOfYear(year)]);
 
   // regroupement par mois
   const months = new Map<string, typeof events>();
@@ -56,7 +60,17 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
           </div>
         </div>
       </section>
+      <section id="calendrier" className="scroll-mt-20 border-b border-line bg-gradient-to-b from-[#f6ecf6] to-paper py-14">
+        <div className="container-x">
+          <p className="eyebrow text-plum">Calendrier annuel</p>
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">Le gospel au Sénégal, jour par jour</h2>
+          <p className="mt-3 max-w-2xl text-mute">Organisateurs : avant de fixer votre date, vérifiez qu&apos;elle est libre. Un jour par grand événement, et chacun peut aller à tous les rendez-vous.</p>
+          <div className="mt-8"><YearCalendar year={year} events={yearEvents} today={today} /></div>
+        </div>
+      </section>
+
       <section className="container-x py-14">
+        <h2 className="mb-8 font-display text-3xl font-bold tracking-tight">À venir</h2>
         {events.length > 0 ? (
           <div className="space-y-14">
             {[...months.entries()].map(([month, list]) => (

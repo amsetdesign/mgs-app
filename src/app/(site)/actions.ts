@@ -175,6 +175,11 @@ export async function submitEvent(_prev: FormState, fd: FormData): Promise<FormS
   const startsAt = new Date(`${date}T${time}:00Z`);
   if (startsAt.getTime() < Date.now() - 24 * 3600 * 1000) return { ok: false, error: "La date de l'événement est déjà passée.", fields: raw };
   if (!rest.contact_phone && !rest.contact_email) return { ok: false, error: "Laissez au moins un téléphone ou un e-mail de contact.", fields: raw };
+  // une date déjà prise demande une confirmation explicite de l'organisateur
+  const sameDay = await getEventsOnDay(date);
+  if (sameDay.length > 0 && fd.get("maintain") !== "on") {
+    return { ok: false, error: `Un événement est déjà prévu le ${date.split("-").reverse().join("/")} (${sameDay.map((e) => e.title).join(", ")}). Choisissez une autre date ou cochez « Je maintiens cette date ».`, fields: raw };
+  }
   if (!hasSupabase) return { ...OFFLINE, fields: raw };
   if (await tooMany("event")) return { ok: false, error: "Trop d'envois. Réessayez dans quelques minutes.", fields: raw };
 
