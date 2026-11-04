@@ -63,23 +63,24 @@ export function NewsBlock({ articles }: { articles: Article[] }) {
 
 function EventFeature({ e, first }: { e: EventItem; first: boolean }) {
   return (
-    <div className="grid overflow-hidden rounded-[var(--radius-card)] bg-white/[0.06] ring-1 ring-white/10 sm:grid-cols-[minmax(0,0.8fr)_1fr]">
+    <div className="grid grid-cols-[38%_1fr] overflow-hidden rounded-[var(--radius-card)] bg-white/[0.06] ring-1 ring-white/10 sm:grid-cols-[minmax(0,0.8fr)_1fr]">
       <Link href={`/evenements/${e.slug}`} className="relative block overflow-hidden bg-black/30">
-        <Visual src={e.poster_url} alt={`Affiche : ${e.title}`} label={e.title} className="aspect-[3/4] size-full sm:aspect-auto" />
-        {first && <span className="absolute top-3 left-3 rounded-full bg-orchid px-3 py-1 text-xs font-semibold text-ink shadow">Prochain rendez-vous</span>}
+        <Visual src={e.poster_url} alt={`Affiche : ${e.title}`} label={e.title} className="size-full min-h-full sm:aspect-auto" />
+        {first && <span className="absolute top-2 left-2 hidden sm:inline-block rounded-full bg-orchid px-3 py-1 text-xs font-semibold text-ink shadow">Prochain rendez-vous</span>}
       </Link>
-      <div className="flex flex-col p-5">
+      <div className="flex min-w-0 flex-col p-4 sm:p-5">
+        {first && <p className="mb-1 text-[11px] font-semibold text-orchid sm:hidden">Prochain rendez-vous</p>}
         <p className="eyebrow text-orchid">{EVENT_CATEGORIES[e.category]}</p>
-        <Link href={`/evenements/${e.slug}`} className="mt-2 font-display text-xl leading-snug font-bold hover:underline sm:text-2xl">{e.title}</Link>
+        <Link href={`/evenements/${e.slug}`} className="mt-2 font-display text-lg leading-snug font-bold hover:underline sm:text-2xl">{e.title}</Link>
         <p className="mt-1 text-sm text-haze">Organisé par {e.organizer}</p>
-        <ul className="mt-4 space-y-2 text-sm text-white/90">
+        <ul className="mt-3 space-y-1.5 text-xs text-white/90 sm:mt-4 sm:space-y-2 sm:text-sm">
           <li className="flex items-start gap-2"><IconCalendar className="mt-0.5 size-4 shrink-0 text-orchid" /><span className="first-letter:uppercase">{formatDate(e.starts_at, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span></li>
           <li className="flex items-start gap-2"><IconClock className="mt-0.5 size-4 shrink-0 text-orchid" />À partir de {formatTime(e.starts_at)}</li>
           <li className="flex items-start gap-2"><IconPin className="mt-0.5 size-4 shrink-0 text-orchid" />{[e.venue, e.city].filter(Boolean).join(", ")}</li>
         </ul>
-        <div className="mt-auto flex flex-wrap gap-2 pt-5">
-          {e.ticket_url && <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className="btn-primary min-h-10 px-4"><IconTicket className="size-4" />Billetterie</a>}
-          <Link href={`/evenements/${e.slug}`} className="btn min-h-10 bg-white px-4 text-ink hover:bg-orchid">Voir l&apos;événement</Link>
+        <div className="mt-auto flex flex-wrap gap-2 pt-4 sm:pt-5">
+          {e.ticket_url && <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" className="btn-primary min-h-9 px-3 text-xs sm:min-h-10 sm:px-4 sm:text-sm"><IconTicket className="size-4" />Billetterie</a>}
+          <Link href={`/evenements/${e.slug}`} className="btn min-h-9 bg-white px-3 text-xs text-ink hover:bg-orchid sm:min-h-10 sm:px-4 sm:text-sm">Voir l&apos;événement</Link>
         </div>
       </div>
     </div>

@@ -62,7 +62,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
             {[...months.entries()].map(([month, list]) => (
               <div key={month}>
                 <h2 className="mb-5 font-display text-2xl font-bold first-letter:uppercase">{month}</h2>
-                <div className="grid gap-4 md:grid-cols-2">{list.map((e) => <EventCard key={e.id} event={e} />)}</div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">{list.map((e) => <EventCard key={e.id} event={e} />)}</div>
               </div>
             ))}
           </div>

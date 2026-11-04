@@ -25,6 +25,7 @@ export default function Header() {
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
+    <>
     <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/95 text-white backdrop-blur">
       <div className="container-x flex h-16 items-center justify-between gap-6">
         <Logo dark className="h-8 w-auto" />
@@ -54,8 +55,10 @@ export default function Header() {
           </button>
         </div>
       </div>
+    </header>
+    {/* hors de l'en-tête : son effet de flou empêcherait le panneau de couvrir l'écran */}
       {open && (
-        <div id="menu-mobile" className="fixed inset-x-0 top-16 bottom-0 overflow-y-auto bg-ink lg:hidden">
+        <div id="menu-mobile" className="fixed inset-x-0 top-16 bottom-0 z-40 overflow-y-auto overscroll-contain bg-ink text-white lg:hidden">
           <nav aria-label="Navigation mobile" className="container-x flex flex-col py-6">
             {NAV.map((item) => (
               <Link key={item.href} href={item.href} className={`border-b border-white/10 py-4 font-display text-2xl font-semibold ${isActive(item.href) ? "text-orchid" : "text-white"}`}>
@@ -68,6 +71,6 @@ export default function Header() {
           </nav>
         </div>
       )}
-    </header>
+    </>
   );
 }

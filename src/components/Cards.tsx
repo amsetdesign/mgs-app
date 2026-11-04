@@ -78,7 +78,7 @@ export function EventCard({ event, dark = false }: { event: EventItem; dark?: bo
   return (
     <Link
       href={`/evenements/${event.slug}`}
-      className={`group flex gap-4 rounded-[var(--radius-card)] p-3 transition-colors ${dark ? "bg-white/[0.06] ring-1 ring-white/10 hover:bg-white/[0.1]" : "bg-white hover:shadow-[0_10px_30px_-15px_rgb(12_9_15/0.35)]"}`}
+      className={`group flex min-w-0 gap-4 rounded-[var(--radius-card)] p-3 transition-colors ${dark ? "bg-white/[0.06] ring-1 ring-white/10 hover:bg-white/[0.1]" : "bg-white hover:shadow-[0_10px_30px_-15px_rgb(12_9_15/0.35)]"}`}
     >
       <div className="relative w-24 shrink-0 overflow-hidden rounded-xl sm:w-28">
         <Visual src={event.poster_url} alt="" label={event.title} className="aspect-[3/4] w-full" />
